@@ -248,3 +248,39 @@ Rules:
 - Exactly one source instance per run.
 - One or more selected databases from that instance.
 - Cutover can be manual or scheduled.
+
+### Start an online migration for a selected database group
+
+```powershell
+.\wrapper-execution-multi-online.ps1 `
+  -ResourceGroupName 'rg_sql_dev_zan' `
+  -ManagedInstanceName 'dev-sql-mi-001' `
+  -StorageAccountName 'adlssqlbackups' `
+  -BackupRootPath 'C:\SqlBackups' `
+  -SelectedInstanceNames 'HP865-DONWHITE$SQL2022' `
+  -SelectedDatabaseNames '2008DW', 'TenantDataDb' `
+  -TransferPollSeconds 60 `
+  -StatusIntervalMinutes 2
+```
+
+### Start an online migration with scheduled cutover
+
+```powershell
+.\wrapper-execution-multi-online.ps1 `
+  -ResourceGroupName 'rg_sql_dev_zan' `
+  -ManagedInstanceName 'dev-sql-mi-001' `
+  -StorageAccountName 'adlssqlbackups' `
+  -BackupRootPath 'C:\SqlBackups' `
+  -SelectedInstanceNames 'HP865-DONWHITE$SQL2022' `
+  -SelectedDatabaseNames '2008DW', 'TenantDataDb' `
+  -TransferPollSeconds 60 `
+  -StatusIntervalMinutes 2 `
+  -ScheduledCutoverLocalTime '2026-04-15 15:15'
+```
+
+Operator notes:
+
+- Online mode still uses the SQL Managed Instance managed identity for LRS restore access.
+- The wrapper may prompt for an AzCopy device login because the uploader runs in a separate long-lived background process.
+- The wrapper starts the background uploader, starts or reuses online LRS restore state, prints status snapshots, and waits for operator actions such as start monitoring, cutover, or quit.
+- Database names in online mode do not need instance-qualified syntax because exactly one source instance is allowed per run.
