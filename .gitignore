@@ -2,13 +2,24 @@
 .vscode/settings.json
 
 # Generated artifacts
-**/logs/
-**/Logs/
-**/reports/
-**/Reports/
-**/state/
-**/State/
+**/logs/*
+!**/logs/.gitkeep
+**/Logs/*
+!**/Logs/.gitkeep
+**/reports/*
+!**/reports/.gitkeep
+**/Reports/*
+!**/Reports/.gitkeep
+**/state/*
+!**/state/.gitkeep
+**/State/*
+!**/State/.gitkeep
 *.state.json
 
-# My scripts
-**/scripts/
+# Keep scripts folders present but empty in Git
+**/scripts/*
+!**/scripts/.gitkeep
+
+# Keep static artifacts local only
+**/static/
+**/Static/
