@@ -1,0 +1,8 @@
+{
+  "action": "GetSkuRecommendation",
+  "outputFolder": "C:\\AzureDataMigrationAssessments\\AssessmentOutput\\ScaledDemo\\SKURecommendations\\RnD_Azure_Assessment",
+  "targetPlatform": "AzureSqlManagedInstance",
+  "targetPercentile": 95,
+  "scalingFactor": 100,
+  "perfQueryIntervalInSec": 5
+}

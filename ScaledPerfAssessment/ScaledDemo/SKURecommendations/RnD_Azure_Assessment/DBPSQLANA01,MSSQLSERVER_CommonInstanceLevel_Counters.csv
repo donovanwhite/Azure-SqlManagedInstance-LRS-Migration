@@ -1,0 +1,2 @@
+ServerName,Edition,HyperthreadRatio,IsClustered,IsHadrEnabled,LogicalCpuCount,MaxServerMemoryInUse,NumberCoresUsed,NumberOfUserDatabases,PhysicalCpuCount,ProductVersion,SqlStartTime,SumOfUserDatabasesSize,TempDbSize,NumOfLogins,TimeDataCollected
+DBPSQLANA01,Standard Edition (64-bit),8,False,True,16,128000,16,2,2,15.0.4138.2,2022-09-01 18:55:40,4338714,513152,169,2022-10-26 09:45:29

@@ -1,0 +1,9 @@
+﻿{
+    "action": "GetMetadata",
+    "outputFolder": "C:\\AzureDataMigrationAssessments\\AssessmentOutput\\ScaledDemo\\SKURecommendations",
+    "overwrite":  "true",
+    "sqlConnectionStrings": [
+    "Data Source=LAPTOP-7ARP8SUO;Initial Catalog=master;Integrated Security=True;",
+    "Data Source=LAPTOP-7ARP8SUO\\SQL2019;Initial Catalog=master;Integrated Security=True;"
+    ]
+}

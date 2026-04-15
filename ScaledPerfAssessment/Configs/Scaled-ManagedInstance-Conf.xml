@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssessmentConfiguration xmlns="http://microsoft.com/schemas/SqlServer/Advisor/AssessmentConfiguration">
+   <AssessmentName>Scale-Assessment-for-AzureSQLManagedInstance</AssessmentName>
+   <AssessmentSourcePlatform>SqlOnPrem</AssessmentSourcePlatform>
+   <AssessmentTargetPlatform>ManagedSqlServer</AssessmentTargetPlatform>
+   <AssessmentDatabases>
+      <AssessmentDatabase>Server=LAPTOP-7ARP8SUO;Integrated Security=true</AssessmentDatabase>
+      <AssessmentDatabase>Server=LAPTOP-7ARP8SUO\SQL2019;Integrated Security=true</AssessmentDatabase>
+   </AssessmentDatabases>
+   <AssessmentResultDma>C:\AzureDataMigrationAssessments\AssessmentOutput\ScaledDemo\Scale-Assessment-for-AzureSQLManagedInstance.dma</AssessmentResultDma>
+   <AssessmentResultJson>C:\AzureDataMigrationAssessments\AssessmentOutput\ScaledDemo\Scale-Assessment-for-AzureSQLManagedInstance.json</AssessmentResultJson>
+   <AssessmentResultCsv>C:\AzureDataMigrationAssessments\AssessmentOutput\ScaledDemo\Scale-Assessment-for-AzureSQLManagedInstance.xls</AssessmentResultCsv>
+   <AssessmentOverwriteResult>true</AssessmentOverwriteResult>
+   <AssessmentEvaluateCompatibilityIssues>true</AssessmentEvaluateCompatibilityIssues>
+   <AssessmentEvaluateFeatureParity>true</AssessmentEvaluateFeatureParity>
+   <AzureCloudEnvironment>Azure</AzureCloudEnvironment>
+   <SubscriptionId>a6708be9-6c3b-4b89-87ec-eb3944a3b20f</SubscriptionId>
+   <AzureMigrateProjectName>ScaleAssessmentMI</AzureMigrateProjectName>
+   <ResourceGroupName>hdinsights_rg</ResourceGroupName>
+   <AzureAuthenticationInteractiveAuthentication>true</AzureAuthenticationInteractiveAuthentication>
+   <AzureAuthenticationTenantId>72f988bf-86f1-41af-91ab-2d7cd011db47</AzureAuthenticationTenantId>
+   <EnableAssessmentUploadToAzureMigrate>true</EnableAssessmentUploadToAzureMigrate>
+</AssessmentConfiguration>

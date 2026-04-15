@@ -1,0 +1,49 @@
+/*
+1.Log Replay Service requires a blob account thus we need to create a SAS credential for duration of migration
+2.Create credential to be used with SAS token over private endpoint 
+(container for blob requires Read & List permission ONLY, if you select more it will fail --By Design)
+*/
+SELECT * FROM sys.credentials --https://dmsdatabasebackups.blob.core.windows.net/dmsbackups
+GO
+/*
+--Simulated transaction log activity for contimous mode LRS 
+USE [AdventureWorks2019]
+GO
+SET NOCOUNT ON
+WHILE 1 = 1
+BEGIN
+EXEC	[HumanResources].[uspUpdateEmployeeLogin]
+		@BusinessEntityID = 5,
+		@OrganizationNode = 0x5ADA,
+		@LoginID = N'3',
+		@JobTitle = N'Design Engineer',
+		@HireDate = N'2008-01-24',
+		@CurrentFlag = 0
+END
+*/
+GO
+BACKUP DATABASE [AdventureWorks2019]
+TO URL = 'https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019/AdventureWorks2019_full.bak'
+WITH INIT, COMPRESSION, CHECKSUM
+GO
+BACKUP LOG [AdventureWorks2019]
+TO URL = 'https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019/adventureworks2019_log_0.trn'  
+WITH COMPRESSION, CHECKSUM
+GO
+BACKUP LOG [AdventureWorks2019]
+TO URL = 'https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019/adventureworks2019_log_1.trn'  
+WITH COMPRESSION, CHECKSUM
+GO
+BACKUP LOG [AdventureWorks2019]
+TO URL = 'https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019/adventureworks2019_log_2.trn'  
+WITH COMPRESSION, CHECKSUM
+GO
+BACKUP LOG [AdventureWorks2019]
+TO URL = 'https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019/adventureworks2019_log_3.trn'  
+WITH COMPRESSION, CHECKSUM
+GO
+--Do not execute 
+BACKUP DATABASE [AdventureWorks2019]
+TO URL = 'https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019/AdventureWorks2019_cutover.bak'
+WITH INIT, COMPRESSION, CHECKSUM
+GO

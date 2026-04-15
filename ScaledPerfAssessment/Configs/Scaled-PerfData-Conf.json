@@ -1,0 +1,10 @@
+{
+    "action": "PerfDataCollection",
+    "perfQueryIntervalInSec": 5,
+    "staticQueryIntervalInSec": 10,
+    "numberOfIterations": 2, 
+    "sqlConnectionStrings": [
+    "Data Source=LAPTOP-7ARP8SUO\\SQL2019;Initial Catalog=Master;Integrated Security=True;"
+    ],
+    "outputFolder": "C:\\AzureDataMigrationAssessments\\AssessmentOutput\\ScaledDemo\\SKURecommendations"
+  }

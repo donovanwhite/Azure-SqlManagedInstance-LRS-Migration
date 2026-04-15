@@ -1,0 +1,13 @@
+#autocompletemode 
+#this is used for single cutover with log file rollovers (-a --last-bn is the backup specified to use for the immediate migration)
+az sql midb log-replay start -g hdinsights_rg --mi sqlshared001 -n adventurworksSimple -a --last-bn "AdventureWorks2019_cutover.bak" --storage-uri "https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019" --storage-sas "sp=rl&st=2022-03-25T15:13:22Z&se=2022-06-29T23:13:22Z&spr=https&sv=2020-08-04&sr=c&sig=WZVueY%2BP%2BEXevJNEivK6z4iiK%2Bm6TBPFsBdLM8sE1s0%3D"
+
+#continousmode
+#this is used to have a 36 hour window for log shipping the migration database to managed Instance
+
+az sql midb log-replay start -g hdinsights_rg --mi sqlshared001 -n adventurworks2019
+	--storage-uri "https://dmsdatabasebackups.blob.core.windows.net/dmsbackups/lrs/adventureworks2019"
+	--storage-sas "sp=rl&st=2022-03-25T15:13:22Z&se=2022-06-29T23:13:22Z&spr=https&sv=2020-08-04&sr=c&sig=WZVueY%2BP%2BEXevJNEivK6z4iiK%2Bm6TBPFsBdLM8sE1s0%3D"
+
+#continousemode cutover using tail end backup to complete the continous mode cutover
+az sql midb log-replay complete -g hdinsights_rg --mi sqlshared001 -n adventurworks2019 --last-backup-name "AdventureWorks2019_cutover.bak"

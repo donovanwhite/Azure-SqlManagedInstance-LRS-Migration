@@ -1,0 +1,14 @@
+# Local VS Code workspace settings
+.vscode/settings.json
+
+# Generated artifacts
+**/logs/
+**/Logs/
+**/reports/
+**/Reports/
+**/state/
+**/State/
+*.state.json
+
+# My scripts
+**/scripts/

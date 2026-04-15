@@ -1,0 +1,16 @@
+{
+  "ResourceGroupName": "rg_sql_dev_zan",
+  "InstanceName": "dev-sql-mi-001",
+  "DatabaseName": "",
+  "DatabaseNames": [],
+  "Collation": "SQL_Latin1_General_CP1_CI_AS",
+  "StorageContainerUri": "",
+  "StorageContainerUriTemplate": "https://adlssqlbackups.blob.core.windows.net/<container>/{db}/",
+  "StorageContainerIdentity": "ManagedIdentity",
+  "StorageContainerSasToken": "",
+  "LastBackupName": "",
+  "LastBackupNames": {},
+  "LogPath": "",
+  "MonitorMinutes": 30,
+  "PollSeconds": 60
+}

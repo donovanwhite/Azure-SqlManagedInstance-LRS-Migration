@@ -1,0 +1,88 @@
+{
+  "Name": "Scale-Assessment-for-AzureSQLManagedInstance",
+  "Databases": [
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [],
+      "Name": "AdventureWorks",
+      "SizeMB": 832.0,
+      "ServerVersion": "15.0.4198.2",
+      "ServerEdition": "Developer Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel150",
+      "ServerName": "LAPTOP-7ARP8SUO"
+    },
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [],
+      "Name": "AdventureWorks2019",
+      "SizeMB": 1716.0,
+      "ServerVersion": "15.0.4198.2",
+      "ServerEdition": "Developer Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel150",
+      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+    },
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [],
+      "Name": "AdventureWorksDW2019",
+      "SizeMB": 208.0,
+      "ServerVersion": "15.0.4198.2",
+      "ServerEdition": "Developer Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel140",
+      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+    },
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [],
+      "Name": "CensusDigitalCollectionMainCapi",
+      "SizeMB": 16.0,
+      "ServerVersion": "15.0.4198.2",
+      "ServerEdition": "Developer Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel150",
+      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+    },
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [],
+      "Name": "sqlnexus",
+      "SizeMB": 58.0,
+      "ServerVersion": "15.0.4198.2",
+      "ServerEdition": "Developer Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel150",
+      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+    },
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [],
+      "Name": "statssa",
+      "SizeMB": 58.0,
+      "ServerVersion": "15.0.4198.2",
+      "ServerEdition": "Developer Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel150",
+      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+    }
+  ],
+  "ServerInstances": [
+    {
+      "ServerName": "LAPTOP-7ARP8SUO",
+      "Version": "15.0.4198.2",
+      "Status": "Error",
+      "AssessmentRecommendations": []
+    },
+    {
+      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019",
+      "Version": "15.0.4198.2",
+      "Status": "Error",
+      "AssessmentRecommendations": []
+    }
+  ],
+  "SourcePlatform": "SqlOnPrem",
+  "Status": "Error",
+  "StartedOn": "2022-04-12T12:08:32.0199128+00:00",
+  "EndedOn": "2022-04-12T12:08:35.16827+00:00",
+  "EvaluateFeatureRecommendations": false,
+  "EvaluateCompatibilityIssues": true,
+  "EvaluateFeatureParity": true,
+  "TargetPlatform": "ManagedSqlServer",
+  "DmaVersion": {}
+}

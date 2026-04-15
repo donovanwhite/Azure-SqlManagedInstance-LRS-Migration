@@ -1,0 +1,1315 @@
+{
+  "Name": "RnD",
+  "Databases": [
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [
+        {
+          "CompatibilityLevel": "CompatLevel150",
+          "Category": "Compatibility",
+          "Severity": "Error",
+          "ChangeCategory": "MigrationBlocker",
+          "RuleId": "LinkedServer",
+          "Title": "Linked server functionality is not supported in Azure SQL Database",
+          "Impact": "Linked servers enable the SQL Server Database Engine to execute commands against OLE DB data sources outside of the instance of SQL Server.",
+          "Recommendation": "Azure SQL Database does not support linked server functionality. The following actions are recommended to eliminate the need for linked servers: 1. Identify the dependent datasets from remote SQL servers and consider moving these into the database being migrated. 2. Migrate the dependent database(s) to Azure SQL Database and use ‘Elastic Database Query’ functionality (Currently in preview) to query across Azure SQL databases 3. Migrate to Azure SQL Managed Instance if the remote server is SQL Server as well 4. Migrate to SQL Server on Azure Virtual Machine.",
+          "MoreInfo": "Check Azure SQL Database elastic database query (Currently in preview) (https://docs.microsoft.com/en-us/azure/azure-sql/database/elastic-query-overview)",
+          "ImpactedObjects": [
+            {
+              "Name": "[dbo].[PC_VDI_GENERIC_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_VDI_GENERIC_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Baby]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_VDI_HEALTHY_BABY_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_VDI_HEALTHY_BABY_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Baby]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_VDI_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[BD_Policy]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[BD_Preferred_Partner]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[Miles_Burn_VB]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Active_Gear_Eligibility]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Active_Gear_Spend]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_ACTIVE_REWARD_PLAYS]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Active_Rewards]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Apple_Watch]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Apple_watch_activations]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_D_DATE]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Flights]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Flights_details]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Fuel]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Fuel_Bank]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Fuel_Bank_Adj]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Gym]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Baby]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Baby_Bank_ADJ]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Baby_Vita_and_Bank]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Care]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Care_Bank_ADJ]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Care_Vita_and_Bank]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Food]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Food_Bank_ADJ]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Food_Vita_and_Bank]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Gear]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Gear_Bank_ADJ]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Healthy_Gear_Vita_and_Bank]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_MEMBERSHIP]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Membership_Cohorts]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Miles_Burn]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Miles_Wi_Group_Vouchers_Link]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Points_To_Miles]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Rebate]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Travel]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_Vitality_Drive_Entities]\n StoredProcedure [dbo].[PC_VDI_LOAD] has unresolved reference to object [172.30.64.48].[VCS_Risk].[dbo].[VDI_VRA_AR_VOUCHERS]",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "CompatibilityLevel": "CompatLevel150",
+          "Category": "Compatibility",
+          "Severity": "Warning",
+          "ChangeCategory": "BreakingChange",
+          "RuleId": "CrossDatabaseReferences",
+          "Title": "Cross-database queries are not supported in Azure SQL Database",
+          "Impact": "Databases on this server use cross-database queries, which are not supported in Azure SQL Database.",
+          "Recommendation": "Azure SQL Database does not support cross-database queries. The following actions are recommended: 1. Migrate the dependent database(s) to Azure SQL Database and use 'Elastic Database Query' (Currently in preview) functionality to query across Azure SQL databases 2. Move the dependent datasets from other databases into the database that is being migrated 3. Migrate to Azure SQL Managed Instance 4. Migrate to SQL Server on Azure Virtual Machine.",
+          "MoreInfo": "Check Azure SQL Database elastic database query (Currently in preview) (https://docs.microsoft.com/en-us/azure/azure-sql/database/elastic-query-overview)",
+          "ImpactedObjects": [
+            {
+              "Name": "[dbo].[PC_ASSET_APP_BASE_LOAD_DELTA]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_ASSET_APP_BASE_LOAD_DELTA] has unresolved reference to object [RnD].[GV_WSP].[CV_CLIENT_LOGIN]\n StoredProcedure [dbo].[PC_ASSET_APP_BASE_LOAD_DELTA] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES_DAY]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_AUTOCATEGORISED_TRANSACTIONS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_AUTOCATEGORISED_TRANSACTIONS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[DAVIDR_Brand_rules_26Oct21_startswith]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CONTRACT_LIMITS_PERIOD]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_ADD_INFO]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CoreBank].[FIRST_CARD_UNLOCK_TMP]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CRM].[CV_LOYALTY_MEMBERSHIP]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_CRM].[CV_LOYALTY_MEMBERSHIP_TIER]\n StoredProcedure [dbo].[PC_BUSINESS_PARTNER_ROLLUP_DETAILS] has unresolved reference to object [RnD].[GV_FinancialVitality].[CV_BP_VITALITY_MONEY_STATUS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_AGENT_PRIORITY_MODEL_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_AGENT_PRIORITY_MODEL_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BUSINESS_PARTNER_BASE]\n StoredProcedure [dbo].[PC_Daily_ASSET_AGENT_PRIORITY_MODEL_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TRAVEL_DETAILS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_PURPOSE]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A] has unresolved reference to object [RnD].[GV_CoreBank].[CV_BP_ADDITIONAL_INFO]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A] has unresolved reference to object [RnD].[GV_Everlytics].[EV_List_Data]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A] has unresolved reference to object [RnD].[GV_Everlytics].[EV_Member_Data]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A] has unresolved reference to object [RnD].[playpen].[BundleOptionDetails]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[SE_DATES_DAY]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_B]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CLIENT_CAMPAIGNS]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CLIENT_CAMPAIGNS_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[SE_DATES_DAY]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_C]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CLIENT_CAMPAIGNS]\n StoredProcedure [dbo].[PC_Daily_ASSET_CLIENT_CAMPAIGNS_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[SE_DATES_DAY]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CDA_CREDIT_APP_INFO]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_TRANSACTOR_REVOLVER]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_Analytics].[CDA_MOM_BP_ARREARS_STATUS]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_BAReturns].[IFRS_ECL]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_CaseManager].[Case]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_Finance].[CV_DCF_CONTRACT]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS_TEMP_8]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_ARREARS_MAP]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_CREDIT_CAT]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_SCF_EAD]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_SCF_PD]\n StoredProcedure [dbo].[PC_Daily_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_MOB_ADJ]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[playpen].[AppDeviceVersion]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ELIG_LU_CONS]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ELIG_LU_OTHER]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FEATURE_SET_MONTH]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_LIBRARY_BASE]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_NBA_ACTIONS_CONSOLIDATION]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SIMPLE_LIMIT_CHANGE]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TRAVEL_DETAILS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_B]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FEATURE_SET_MONTH]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_JOURNEY_ALLOCATION_RANDOM]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_NBA_ACTIONS_CONSOLIDATION]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_C]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FEATURE_SET_MONTH]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[ASSET_JOURNEY_ALLOCATION_RANDOM]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ALLOCATION_REF_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[ASSET_NBA_ACTIONS_CONSOLIDATION]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CDA_CREDIT_APP_INFO]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_MARKETING_CAMPAIGNS_ELIGIBILITY]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_Campaign].[CampaignCase]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BP_CLIENT_CONSENT]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_Everlytics].[EV_Member_Data]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_ACCOUNT_CLOSURE_LIST]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_ACCOUNT_CLOSURE_SAGA]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_CASES]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_CCCATEGORY_EXT]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_STEPS]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CLIENT_CAMPAIGNS]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_COMM_FINAL]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_CREDIT_CAT]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_PROD_UPGRADE_COHORTS]\n StoredProcedure [dbo].[PC_Daily_ASSET_JOURNEY_ELIGIBILITY_ALLOCATION_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_REWARDS_PEOPLE_LIKE_YOU]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_NB_DECILE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_NB_DECILE_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Daily_ASSET_NB_DECILE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS_NB]\n StoredProcedure [dbo].[PC_Daily_ASSET_NB_DECILE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_NB_DECILE]\n StoredProcedure [dbo].[PC_Daily_ASSET_NB_DECILE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_FEATURE_SET_NB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_ASSET_SIMPLE_LIMIT_CHANGE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_ASSET_SIMPLE_LIMIT_CHANGE_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[/CDCARD/LIMITS]\n StoredProcedure [dbo].[PC_Daily_ASSET_SIMPLE_LIMIT_CHANGE_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_DAILY_ASSET_WEEKLY_SPEND_POS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_DAILY_ASSET_WEEKLY_SPEND_POS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[TI_Date_Dimensions]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Daily_FEATURE_SET_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Daily_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_FEATURE_SET_NB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n StoredProcedure [dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD] has unresolved reference to object [RnD].[GV_WSP].[CV_CLIENT_LOGIN]\n StoredProcedure [dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD] has unresolved reference to object [RnD].[PP_RnD].[lkpTokenRequestors]\n StoredProcedure [dbo].[PC_DAILY_NIR_WEEKLY_ENGAGEMENT_LOAD] has unresolved reference to object [RnD].[PP_RnD].[TI_Date_Dimensions]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_DEANB_PERMISSIONS_NB_MONTH_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_DEANB_PERMISSIONS_NB_MONTH_LOAD] has unresolved reference to object [RnD].[GV_WSP].[ClientLogin_DeviceId_LoginAudit]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_DEANB_PUSH_MESSAGE_NB_PERMISSIONS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_DEANB_PUSH_MESSAGE_NB_PERMISSIONS_LOAD] has unresolved reference to object [RnD].[GV_Everlytics].[EV_Member_Data]\n StoredProcedure [dbo].[PC_DEANB_PUSH_MESSAGE_NB_PERMISSIONS_LOAD] has unresolved reference to object [RnD].[GV_WSP].[ClientLogin_DeviceId_LoginAudit]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_INT_ACCOUNT_DEBIT_CREDIT_BALANCES]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_INT_ACCOUNT_DEBIT_CREDIT_BALANCES] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_BALANCES_PERIODS]\n StoredProcedure [dbo].[PC_INT_ACCOUNT_DEBIT_CREDIT_BALANCES] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_PRICING_ATTRIBUTES]\n StoredProcedure [dbo].[PC_INT_ACCOUNT_DEBIT_CREDIT_BALANCES] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_PURPOSE]\n StoredProcedure [dbo].[PC_INT_ACCOUNT_DEBIT_CREDIT_BALANCES] has unresolved reference to object [RnD].[GV_FinancialVitality].[CV_BP_VITALITY_MONEY_STATUS]\n StoredProcedure [dbo].[PC_INT_ACCOUNT_DEBIT_CREDIT_BALANCES] has unresolved reference to object [RnD].[PP_RnD].[VM_Status_periods_2]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_IPHONE_BENEFIT_BASE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_IPHONE_BENEFIT_BASE_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_CASES]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_CCCATEGORY_EXT]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_CCINTERACTION_PARENT_EXT]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[GV_ServicingPortal].[CV_CLIENT_SURVEY_RESULT]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[GV_Telephony].[CV_INTERACTION]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[GV_Telephony].[CV_INTERACTION_RESOURCE]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[GV_Telephony].[CV_MEDIATION_SEGMENT]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_MONTH_DATE]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_CALL_STATS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSETS_CALL_STATS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSETS_HF_BREAKAGE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSETS_HF_BREAKAGE_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Healthy_Food_Vita_and_Bank]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_HF_BREAKAGE_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSETS_HF_BREAKAGE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_INCL_JV_VH]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_ACCOUNT_ACTIVE_PERIODS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_ACCOUNT_ACTIVE_PERIODS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACCOUNT_ACTIVE_PERIODS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_ACCOUNTS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_ACCOUNT_MONTH_DATE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_ACCOUNT_MONTH_DATE_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CONTRACT_LIMITS_PERIOD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACCOUNT_MONTH_DATE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACCOUNT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACCOUNT_MONTH_DATE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_ACIVE_BENEFITS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_ACIVE_BENEFITS_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Active_Gear_Eligibility]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACIVE_BENEFITS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACIVE_BENEFITS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_VH_BASE_BANK]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_ACTION_MONTH_VIEW_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_ACTION_MONTH_VIEW_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_ACTION_MONTH_VIEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_ACTION_MONTH_VIEW_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_ACTION_MONTH_VIEW_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_ACTION_MONTH_VIEW_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_ACTION_MONTH_VIEW_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_ACTION_MONTH_VIEW_CHECK] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_ACTION_MONTH_VIEW]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_ACTION_MONTH_VIEW_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_MONTH_VIEW_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CLIENT_CAMPAIGNS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_ACTION_REF_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_ACTION_REF]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_ACTION_REF_NEW]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_ACTION_REF_RESULTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACTION_REF]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CDA_CREDIT_APP_INFO]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_TOKEN]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DIGITAL_INDEX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_MONTHLY_VM_POINTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_USAGE_INDEX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_ACTION_REF_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSSET_CREDIT_INDICES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_ACTIVE_GEAR_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_ACTIVE_GEAR_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Active_Gear_Spend]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_APP_BASE_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_CHECK] has unresolved reference to object [RnD].[PP_EIS].[ASSET_AA_CHECK_APP_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_CHECK] has unresolved reference to object [RnD].[PP_EIS].[ASSET_AA_CHECK_APP_BASE_NEW]\n StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_CHECK] has unresolved reference to object [RnD].[PP_EIS].[ASSET_AA_CHECK_APP_BASE_RESULTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_CHECK] has unresolved reference to object [RnD].[PP_EIS].[ASSET_APP_BASE]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_APP_BASE_DEM_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_DEM_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_APP_BASE_DEM_LOAD_OLD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_DEM_LOAD_OLD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_APP_BASE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_LOAD] has unresolved reference to object [RnD].[GV_WSP].[CV_CLIENT_LOGIN]\n StoredProcedure [dbo].[PC_Monthly_ASSET_APP_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES_DAY]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_BANK_EPL_VAR_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_EPL_VAR_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BANK_EPL_VAR]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_EPL_VAR_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BANK_EPL_VAR_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_EPL_VAR_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BANK_EPL_VAR_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_EPL_VAR_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BUREAU]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DIGITAL_INDEX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_MONTHLY_VM_POINTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_PARTNER]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_POS_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_USAGE_INDEX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_POST_CODE_INDEX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_SPEND_BAND_REF]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_MILE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_MILE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_MILE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_MILES_BAL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_MILE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_MILES_BURN]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Active_Rewards]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACIVE_BENEFITS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACTIVE_GEAR]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_HC_BREAKAGE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_VH_BASE_BANK]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_EPL_VAR_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSETs_HF_BREAKAGE]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BANK_PARTNER_DISCOUNTS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_PARTNER_DISCOUNTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_PARTNER_DISCOUNTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_PARTNER_DISCOUNTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[tblBankPartnerDiscounts]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_BANK_REWARDS_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_REWARDS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BANK_REWARDS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_REWARDS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BANK_REWARDS_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_REWARDS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BANK_REWARDS_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BANK_REWARDS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_REWARDS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BANK_REWARDS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Active_Gear_Spend]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Flights]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Travel]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TRAVEL_MONTH]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR_MILE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR_VH]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FEATURE_SET_MONTH]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BANK_REWARDS_TRAIN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_PARTNER]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_BALANCES_PERIODS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_FTD_DETAIL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_BASE_BALANCES_GROUP]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[CV_ACCOUNT_MATURITY_BUCKETS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_DATES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_A]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_A] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_BALANCES_PERIODS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACCOUNT_MONTH_DATE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_MONTH]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_B]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_B] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_B] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_FTD_DETAIL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_B] has unresolved reference to object [RnD].[PP_RND].[ASSET_BASE_BALANCES_GROUP]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_ACCOUNTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[CV_ACCOUNT_MATURITY_BUCKETS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_C]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_C] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_C] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_FTD_DETAIL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_C] has unresolved reference to object [RnD].[PP_RND].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_BALANCES_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[CV_ACCOUNT_MATURITY_BUCKETS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_BASE_BALANCES_LOAD_C_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_BALANCES_LOAD_C_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_BALANCES_LOAD_C_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BASE_BALANCES_GROUP_DEM_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_BALANCES_LOAD_C_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_BASE_BALANCES_GROUP_DEM_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_BALANCES_LOAD_C_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_BASE_DEMOGRAPHICS_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_DEMOGRAPHICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_DEMOGRAPHICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_DEMOGRAPHICS_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_DEMOGRAPHICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_DEMOGRAPHICS_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_BASE_DEMOGRAPHICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [Rnd].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_PURPOSE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_BP_ADDITIONAL_INFO]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_BP_CONTRACT_ROLES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CONTRACT_LIMITS_PERIOD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BP_ADDRESS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BP_EMPLOYMENT_DETAIL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BUSINESS_PARTNER_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_Finance].[CV_CREDIT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[GV_FinancialVitality].[CV_BP_VITALITY_MONEY_STATUS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_ACCOUNT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_INCOME_REF]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PRODUCT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_DEMOGRAPHICS_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_MONTH_DATE]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BASE_INCL_JV_VH_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_INCL_JV_VH_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_CARD_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_INCL_JV_VH_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_INCL_JV_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BASE_INCL_JV_VH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_INCL_JV_VH]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_BUREAU_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_BUREAU_LOAD] has unresolved reference to object [RnD].[GV_CreditBureau].[CREDIT_BUREAU_ELIGIBILITY_VARS_V]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BUREAU_LOAD] has unresolved reference to object [RND].[PP_RND].[ASSET_LU_CREDIT_CAT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_BUREAU_LOAD] has unresolved reference to object [RND].[PP_RND].[ASSET_LU_DELPHI]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_CARD_BASE_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_BASE_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_BASE]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_BASE_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_BASE_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_BASE_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_BASE_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_BASE_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_BASE]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_CARD_BASE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_BASE_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_BASE_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_BASE_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BUSINESS_PARTNER_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_ACCOUNTS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_CARD_CHANNEL_LIMITS_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_CHANNEL_LIMITS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_CHANNEL_LIMITS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_CHANNEL_LIMITS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_CHANNEL_LIMITS_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_CHANNEL_LIMITS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_CHANNEL_LIMITS_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_CHANNEL_LIMITS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_CARD_CHANNEL_LIMITS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_CARD_CHANNEL_LIMITS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_CHANNEL_LIMITS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[/CDCARD/LIMITS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_CHANNEL_LIMITS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_CHANNEL_LIMITS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[ZBSTLMD01]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_CHANNEL_LIMITS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[ZBSTLMD02]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_CHANNEL_LIMITS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[ZBSTLMD03]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_CARD_TOKEN_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_TOKEN_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_TOKEN]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_TOKEN_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_TOKEN_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_TOKEN_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CARD_TOKEN_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CARD_TOKEN_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_TOKEN]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_CARD_TOKEN_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_TOKEN_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_TOKEN_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CARD_TOKEN_LOAD] has unresolved reference to object [RnD].[PP_RnD].[lkpTokenRequestors]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_A]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_APP_BASE_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[DEANB_PERMISSIONS_NB_MONTH]\n StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[DEANB_PUSH_BP_NB]\n StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[DEANB_PUSH_MESSAGE_NB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_B]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_COMM_BASE]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_C]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[ASSET_COMM_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_COMM_BASE_LOAD_C] has unresolved reference to object [RnD].[PP_RnD].[ASSET_COMM_LOOKUP]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_CREDIT_METRICS_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CREDIT_METRICS_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CREDIT_METRICS_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CREDIT_METRICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CDA_CREDIT_APP_INFO]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_TRANSACTOR_REVOLVER]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_Analytics].[CDA_MOM_BP_ARREARS_STATUS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_BAReturns].[IFRS_ECL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_CaseManager].[Case]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[GV_Finance].[CV_DCF_CONTRACT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS_TEMP_8]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_ARREARS_MAP]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_CREDIT_CAT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_SCF_EAD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_SCF_PD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_MOB_ADJ]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_DIGITAL_INDEX_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_DIGITAL_INDEX_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_DIGITAL_INDEX]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_DIGITAL_INDEX_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_DIGITAL_INDEX_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_DIGITAL_INDEX_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_DIGITAL_INDEX_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_DIGITAL_INDEX_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DIGITAL_INDEX]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[playpen].[AppDeviceVersion]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_APP_BASE_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_TOKEN]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSETS_CALL_STATS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_DIGITAL_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_Digital_Index_Lookup]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_FEATURE_SET_MONTH_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_FEATURE_SET_MONTH_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_FEATURE_SET_MONTH]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_FEATURE_SET_MONTH_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_FEATURE_SET_MONTH_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_FEATURE_SET_MONTH_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_FEATURE_SET_MONTH_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_FEATURE_SET_MONTH_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FEATURE_SET_MONTH]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR_MILE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR_VH]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DIGITAL_INDEX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSSET_CREDIT_INDICES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FEATURE_SET_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_FOREX_VNB_ASS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_FX_RATES_DAY_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_FX_RATES_DAY_LOAD] has unresolved reference to object [RnD].[GV_MarketData].[CV_FX_RATE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_FX_RATES_DAY_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES_DAY]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_FX_RATES_MONTH_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_FX_RATES_MONTH_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_HC_BREAKAGE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_HC_BREAKAGE_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Healthy_Care_Vita_and_Bank]\n StoredProcedure [dbo].[PC_Monthly_ASSET_HC_BREAKAGE_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_HC_BREAKAGE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_INCL_JV_VH]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_INCOME_REF_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_INCOME_REF_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BUSINESS_PARTNER_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_INCOME_REF_LOAD] has unresolved reference to object [RnD].[playpen].[CDA_CURR_BP_INCOME]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_INDICES_BASE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_INDICES_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_INDICES_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_INDICES_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PRIMARY_CAT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_INDICES_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_BETA_STATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_INDICES_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_VIF_FACTOR_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_INDICES_BASE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_VIF_FACTOR_REMAINDER]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_INDICES_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_INDICES]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_INDICES_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_INDICES_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_INDICES_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_PROFIT_PMPM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_LINKED_ACCOUNT_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_LINKED_ACCOUNT_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_LINKED_ACCOUNT_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_BASE]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_MILES_BAL_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_MILES_BAL_LOAD] has unresolved reference to object [RnD].[CorpVitality].[Bank_Miles_Trx_Details]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_MILES_BURN_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_MILES_BURN_LOAD] has unresolved reference to object [RnD].[CorpVitality].[Bank_Miles_Trx_Details]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_MODEL_REF_NUM_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_MODEL_REF_NUM_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_MONTH_DATE_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_MONTH_DATE_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_DATES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_NBA_ACTIONS_CONSOLIDATION_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_NBA_ACTIONS_CONSOLIDATION_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_NBA_ACTIONS_CONSOLIDATION]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_NBA_ACTIONS_CONSOLIDATION_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_NBA_ACTIONS_CONSOLIDATION_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_NBA_ACTIONS_CONSOLIDATION_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_NBA_ACTIONS_CONSOLIDATION_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_NBA_ACTIONS_CONSOLIDATION_CHECK] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_NBA_ACTIONS_CONSOLIDATION]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CARD_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_FTP_RATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PRODUCT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_RATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_SPEND_BAND]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_PMPM_FINANCE_ADJ]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_SPEND_POS_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_VH_BASE_BANK]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSSET_CREDIT_INDICES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[BM_FeeInput]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PMPM_FINANCE_ADJ_LOAD] has unresolved reference to object [RnD].[PP_RnD].[BM_FINANCE_ADJ_FACTORS2]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACCOUNT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BP_RAND]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_FEATURE_SET_MONTH]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_INCOME]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PRODUCT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_SPEND_BAND]\n StoredProcedure [dbo].[PC_Monthly_ASSET_PROD_UPGRADE_COHORTS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_PROFIT_PMPM_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_PROFIT_PMPM_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_PROFIT_PMPM]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_PROFIT_PMPM_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_PROFIT_PMPM_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_PROFIT_PMPM_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_PROFIT_PMPM_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_PROFIT_PMPM_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_PROFIT_PMPM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_REWARDS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Flights]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_LOAD] has unresolved reference to object [RnD].[CorpVitality].[VDI_Travel]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_LOAD] has unresolved reference to object [RnD].[CorpWare].[MILES_TRN_DETAIL]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_REWARDS_PEOPLE_LIKE_YOU_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_REWARDS_PEOPLE_LIKE_YOU_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_REWARDS_PEOPLE_LIKE_YOU]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_REWARDS_PEOPLE_LIKE_YOU_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_REWARDS_PEOPLE_LIKE_YOU_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_REWARDS_PEOPLE_LIKE_YOU_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_REWARDS_PEOPLE_LIKE_YOU_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_REWARDS_PEOPLE_LIKE_YOU_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_REWARDS_PEOPLE_LIKE_YOU]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET REWARDS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACCOUNT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACIVE_BENEFITS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR_VH]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_REWARDS_TRAIN]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BP_RAND2]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_REWARD_PERC]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_SPEND_BAND]\n StoredProcedure [dbo].[PC_Monthly_ASSET_REWARDS_PEOPLE_LIKE_YOU_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_PROD_UPGRADE_COHORTS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LATEST_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LATEST_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_CAT_AFFLUENCE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LATEST_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_CAT_AFFLUENCE_WITHIN]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LATEST_LOAD_TMP]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LATEST_LOAD_TMP] has unresolved reference to object [RnD].[PP_RnD].[SE_CAT_AFFLUENCE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LATEST_LOAD_TMP] has unresolved reference to object [RnD].[PP_RnD].[SE_CAT_AFFLUENCE_WITHIN]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_PARTNER_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_PARTNER]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_SPEND_POS_B_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_POS_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_SPEND_POS_DEM]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_POS_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_SPEND_POS_DEM_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_POS_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_SPEND_POS_DEM_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_POS_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_POS_DEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_POS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_SPEND_POS_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[DAVIDR_Qualifying_Transaction_Types]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_A]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_A] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_A] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_A] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_B]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_B] has unresolved reference to object [RnD].[PP_RND].[ASSET_SPEND_POS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_POS_LOAD_B] has unresolved reference to object [RnD].[PP_RND].[ASSET_SPEND_POS_DEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_SPEND_VAL_B_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_VAL_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_VAL_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_SPEND_VAL_DEM_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_VAL_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_SPEND_VAL_DEM_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_SPEND_VAL_B_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD] has unresolved reference to object [RnD].[PP_RnD].[DAVIDR_Qualifying_Transaction_Types]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD_B]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD_B] has unresolved reference to object [RnD].[PP_RND].[ASSET_SPEND_VAL]\n StoredProcedure [dbo].[PC_Monthly_ASSET_SPEND_VAL_LOAD_B] has unresolved reference to object [RnD].[PP_RND].[ASSET_SPEND_VAL_DEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_TARGET_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_TARGET_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TARGET]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TARGET_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TARGET_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TARGET_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TARGET_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TARGET_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TARGET]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_TARGET_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DIGITAL_INDEX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_PROFIT_PMPM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSSET_CREDIT_INDICES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_FOREX_VNB_ASS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_TARGET_NTB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_NTB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_NTB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TARGET_NTB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_PROFIT_PMPM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_PARTNER]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_CAT_LOOKUP]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_NET_INC_LOOKUP]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_SPEND_INC_LOOKUP]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_SUBCAT_LOOKUP]\n StoredProcedure [dbo].[PC_Monthly_ASSET_TOW_INFLOW_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_TRX_LOOKUP]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TRAINING]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TRAINING_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TRAINING_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TRAINING]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK_GVT]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK_GVT] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TRAINING]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK_GVT] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_AA_CHECK_TRAINING]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK_GVT] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_AA_CHECK_TRAINING_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_CHECK_GVT] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_AA_CHECK_TRAINING_RESULTS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_TRAINING_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_TRAINING_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_TRAINING_NTB_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_NTB_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TRAINING_NTB]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_NTB_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TRAINING_NTB_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_NTB_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_TRAINING_NTB_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAINING_NTB_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TRAINING_NTB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_TRAINING_NTB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_TRAINING_NTB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelAccommodationCosts]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelAccommodationDetails]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelBooking]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelCarHireCosts]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelCarHireDetails]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelFlightCosts]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelFlightDetails]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_A] has unresolved reference to object [RnD].[PP_RnD].[tblTravelPerson]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_B]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_B] has unresolved reference to object [RnD].[GV_WSP].[BehaviouralData_tblAirportLoungeVouchers]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_TRAVEL_DETAILS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_TRAVEL_DETAILS_LOAD_B] has unresolved reference to object [RnD].[PP_RnD].[ASSET_VH_BASE_BANK]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_USAGE_INDEX_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_USAGE_INDEX_LOAD] has unresolved reference to object [RnD].[GV_WSP].[CV_DISCOVERY_PAY_ACCOUNTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_USAGE_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_USAGE_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSET_USAGE_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_VAL_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSET_USAGE_INDEX_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_INT_INDEX_LOOKUP]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_VALUES_TRACKING_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_VALUES_TRACKING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_VALUES_TRACKING]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VALUES_TRACKING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_VALUES_TRACKING_NEW]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VALUES_TRACKING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_VALUES_TRACKING_RESULTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VALUES_TRACKING_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_VALUES_TRACKING]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_VALUES_TRACKING_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_VALUES_TRACKING_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_FOREX_VNB_ASS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_ACTIVE_REWARDS_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_ACTIVE_REWARDS_GOALS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_CARS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_FLIGHTS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_GYM_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_HEALTHY_CARE_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_HEALTHY_CARE_TRANSACTIONS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_HEALTHY_FOOD_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_HEALTHY_FOOD_ENTITY_BASE]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_HEALTHY_FOOD_TRANSACTIONS]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[GV_CorpNZ].[VRA_HOTELS_FIX]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_INCL_JV_VH]\n StoredProcedure [dbo].[PC_Monthly_ASSET_VH_BASE_BANK_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_VH_BASE_BANK]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSET_WC_AGENT_COST_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSET_WC_AGENT_COST_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_WC_AGENT_COST]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_WC_AGENT_COST_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_WC_AGENT_COST_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_WC_AGENT_COST_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_WC_AGENT_COST_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSET_WC_AGENT_COST_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_WC_AGENT_COST]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_ASSSET_CREDIT_INDICES_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_ASSSET_CREDIT_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CREDIT_INDICES]\n StoredProcedure [dbo].[PC_MONTHLY_ASSSET_CREDIT_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CREDIT_INDICES_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_ASSSET_CREDIT_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSET_AA_CHECK_CREDIT_INDICES_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_ASSSET_CREDIT_INDICES_CHECK] has unresolved reference to object [RnD].[PP_RnD].[ASSSET_CREDIT_INDICES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_Monthly_ASSSET_CREDIT_INDICES_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_Monthly_ASSSET_CREDIT_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_BALANCES_GROUP_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSSET_CREDIT_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_Monthly_ASSSET_CREDIT_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BUREAU]\n StoredProcedure [dbo].[PC_Monthly_ASSSET_CREDIT_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n StoredProcedure [dbo].[PC_Monthly_ASSSET_CREDIT_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_SPEND_POS_DEM]\n StoredProcedure [dbo].[PC_Monthly_ASSSET_CREDIT_INDICES_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_BDR_LU]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_EIS_ASSET_CREDIT_METRICS_CHECK]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_EIS_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_AA_CHECK_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_MONTHLY_EIS_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_AA_CHECK_CREDIT_METRICS_NEW]\n StoredProcedure [dbo].[PC_MONTHLY_EIS_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_AA_CHECK_CREDIT_METRICS_RESULTS]\n StoredProcedure [dbo].[PC_MONTHLY_EIS_ASSET_CREDIT_METRICS_CHECK] has unresolved reference to object [RnD].[PP_RnD].[EIS_ASSET_CREDIT_METRICS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_MARGIN_CLIENT_TOTALS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_MARGIN_CLIENT_TOTALS_LOAD] has unresolved reference to object [RnD].[PP_Finance].[Vitality Statuses]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_MARGIN_DAILY_MARGIN_NOT_SAVINGS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_MARGIN_DAILY_MARGIN_NOT_SAVINGS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_MONTHLY_MARGIN_DAILY_MARGIN_NOT_SAVINGS_LOAD] has unresolved reference to object [rnd].[GV_CoreBank].[CV_ACCOUNT_BALANCES_PERIODS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_MARGIN_DAILY_MARGIN_SAVINGS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_MARGIN_DAILY_MARGIN_SAVINGS_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_MONTHLY_MARGIN_DAILY_MARGIN_SAVINGS_LOAD] has unresolved reference to object [rnd].[GV_CoreBank].[CV_ACCOUNT_BALANCES_PERIODS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_MONTHLY_MARGIN_GET_GL_DATA_BY_DATE_LOAD']",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_MONTHLY_MARGIN_GET_GL_DATA_BY_DATE_LOAD'] has unresolved reference to object [master].[spt_values]\n StoredProcedure [dbo].[PC_MONTHLY_MARGIN_GET_GL_DATA_BY_DATE_LOAD'] has unresolved reference to object [RnD].[GV_Finance].[CV_PLAN_JOURNAL]\n StoredProcedure [dbo].[PC_MONTHLY_MARGIN_GET_GL_DATA_BY_DATE_LOAD'] has unresolved reference to object [RnD].[GV_Finance].[CV_UNIVERSAL_JOURNAL]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_NB_Dashbaord_Input_EXTRACT]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_NB_Dashbaord_Input_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS_NB]\n StoredProcedure [dbo].[PC_NB_Dashbaord_Input_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[DEANB_30DAY_ENGAGEMENT_PRED]\n StoredProcedure [dbo].[PC_NB_Dashbaord_Input_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[SE_FEATURE_SET_NB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_NB_Dashbaord_Input_Later_Months_EXTRACT]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_NB_Dashbaord_Input_Later_Months_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR]\n StoredProcedure [dbo].[PC_NB_Dashbaord_Input_Later_Months_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_NB_Dashbaord_Input_Later_Months_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS_NB]\n StoredProcedure [dbo].[PC_NB_Dashbaord_Input_Later_Months_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[ASSET_INDICES_BASE]\n StoredProcedure [dbo].[PC_NB_Dashbaord_Input_Later_Months_EXTRACT] has unresolved reference to object [RnD].[PP_RnD].[ASSET_USAGE_INDEX]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_APP_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_APP_NB_LOAD] has unresolved reference to object [RnD].[GV_WSP].[CV_CLIENT_LOGIN]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_BASE_BALANCES_GROUP_DEM_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_BASE_BALANCES_GROUP_DEM_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_FTD_DETAIL]\n StoredProcedure [dbo].[PC_SE_BASE_BALANCES_GROUP_DEM_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[CV_ACCOUNT_MATURITY_BUCKETS]\n StoredProcedure [dbo].[PC_SE_BASE_BALANCES_GROUP_DEM_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_BASE_BALANCES_NB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_BASE_BALANCES_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_BASE_BALANCES_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_SE_BASE_BALANCES_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_BALANCES_PERIODS]\n StoredProcedure [dbo].[PC_SE_BASE_BALANCES_NB_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_BP_INTIAL_PERIODS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_BASE_BALANCES_NB_LOAD_TEST]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_BASE_BALANCES_NB_LOAD_TEST] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_BALANCES_PERIODS]\n StoredProcedure [dbo].[PC_SE_BASE_BALANCES_NB_LOAD_TEST] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACCOUNT_MONTH_DATE]\n StoredProcedure [dbo].[PC_SE_BASE_BALANCES_NB_LOAD_TEST] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_MONTH]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CaseManager].[Case]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT_PURPOSE]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_BP_ADDITIONAL_INFO]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_BP_CONTRACT_ROLES]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CONTRACT_LIMITS_PERIOD]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BP_ADDRESS]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BP_EMPLOYMENT_DETAIL]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BUSINESS_PARTNER_BASE]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_Finance].[CV_CREDIT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[GV_FinancialVitality].[CV_BP_VITALITY_MONEY_STATUS]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_ACCOUNT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_BP_INTIAL_PERIODS]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[PP_RND].[ASSET_INCOME_REF]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PRODUCT]\n StoredProcedure [dbo].[PC_SE_BASE_DEMOGRAPHICS_NB_LOAD] has unresolved reference to object [RnD].[pp_rnd].[DEANB_CALL_CENTRE_LOOKUP]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_BP_INTIAL_PERIODS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_BP_INTIAL_PERIODS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_ACCOUNT_ACTIVE_PERIODS]\n StoredProcedure [dbo].[PC_SE_BP_INTIAL_PERIODS_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_DATES_JOIN_PERIOD]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_BUREAU_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_BUREAU_NB_LOAD] has unresolved reference to object [RnD].[GV_CreditBureau].[CREDIT_BUREAU_ELIGIBILITY_VARS_V]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_CARD_BASE_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_CARD_BASE_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n StoredProcedure [dbo].[PC_SE_CARD_BASE_NB_LOAD] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n StoredProcedure [dbo].[PC_SE_CARD_BASE_NB_LOAD] has unresolved reference to object [RnD].[GV_CRM].[CV_BUSINESS_PARTNER_BASE]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_CARD_TOKEN_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_CARD_TOKEN_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[lkpTokenRequestors]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_FEATURE_SET_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[AV_DataAsset].[CV_CREDIT_METRICS]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[GV_CaseManager].[Case]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[playpen].[BPSalesChannel]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BANK_EPL_VAR_VH]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS_NB]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_VH_BASE_BANK]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[pp_rnd].[DEANB_CALL_CENTRE_LOOKUP]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RND].[SE_APP_NB]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_BASE_BALANCES_GROUP_DEM_NB]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_BUREAU_NB]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_CARD_BASE_NB]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_CARD_TOKEN_NB]\n StoredProcedure [dbo].[PC_SE_FEATURE_SET_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[SE_SPEND_VAL_DEM_NB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[PC_SE_SPEND_VAL_DEM_NB_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[PC_SE_SPEND_VAL_DEM_NB_LOAD] has unresolved reference to object [RnD].[PP_RnD].[ASSET_BASE_DEMOGRAPHICS]\n StoredProcedure [dbo].[PC_SE_SPEND_VAL_DEM_NB_LOAD] has unresolved reference to object [RnD].[PP_RND].[SE_SPEND_VAL_NB]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[sp_Load_Bank_Miles_Trx_Details]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[sp_Load_Bank_Miles_Trx_Details] has unresolved reference to object [VCS_Risk].[dbo].[Bank_Miles_Trx_Details]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[CV_BP_ADDITIONAL_INFO_V]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[CV_BP_ADDITIONAL_INFO_V] has unresolved reference to object [RnD].[GV_CoreBank].[CV_BP_ADDITIONAL_INFO]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[FN_CheckJobSuccess]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[FN_CheckJobSuccess] has unresolved reference to object [RnD].[CCR].[JOB_LOG]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[FN_CheckJobWaterline]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[FN_CheckJobWaterline] has unresolved reference to object [RnD].[GV_CCR].[JOB_LOG]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[Leads_V]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[Leads_V] has unresolved reference to object [RnD].[GV_Leads].[Leads]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[RW_PaymentItemsTest]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[RW_PaymentItemsTest] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n Unknown [dbo].[RW_PaymentItemsTest] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n Unknown [dbo].[RW_PaymentItemsTest] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[RW_PaymentItemsTest] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[RW_PaymentItemsTest] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n Unknown [dbo].[RW_PaymentItemsTest] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]\n Unknown [dbo].[RW_PaymentItemsTest] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PAYMENT_ITEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_ASSET_CARD_LU]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_ASSET_CARD_LU] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n Unknown [dbo].[TF_ASSET_CARD_LU] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_ASSET_CARD_LU] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_ASSET_CARD_LU_INC]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_ASSET_CARD_LU_INC] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n Unknown [dbo].[TF_ASSET_CARD_LU_INC] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_ASSET_CARD_LU_INC] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[TF_ASSET_CARD_LU_INC] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_ASSET_SPEND_POS]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_ASSET_SPEND_POS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n Unknown [dbo].[TF_ASSET_SPEND_POS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_ASSET_SPEND_POS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[TF_ASSET_SPEND_POS] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n Unknown [dbo].[TF_ASSET_SPEND_POS] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]\n Unknown [dbo].[TF_ASSET_SPEND_POS] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PAYMENT_ITEM]\n Unknown [dbo].[TF_ASSET_SPEND_POS] has unresolved reference to object [RnD].[PP_RnD].[ITEMS_PAYMENT_NOTES_TEMP_4]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_ASSET_SPEND_VAL]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n Unknown [dbo].[TF_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[TF_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n Unknown [dbo].[TF_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]\n Unknown [dbo].[TF_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PAYMENT_ITEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_ASSET_SPEND_VAL_INCREMENTING_MONTH]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_ASSET_SPEND_VAL_INCREMENTING_MONTH] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_INCREMENTING_MONTH] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_INCREMENTING_MONTH] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_INCREMENTING_MONTH] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_INCREMENTING_MONTH] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_INCREMENTING_MONTH] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PAYMENT_ITEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_ASSET_SPEND_VAL_ROLLING_MONTH]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_ASSET_SPEND_VAL_ROLLING_MONTH] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_ROLLING_MONTH] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_ROLLING_MONTH] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_ROLLING_MONTH] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_ROLLING_MONTH] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]\n Unknown [dbo].[TF_ASSET_SPEND_VAL_ROLLING_MONTH] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PAYMENT_ITEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_DAILY_ASSET_SPEND_VAL]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_DAILY_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n Unknown [dbo].[TF_DAILY_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_DAILY_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[TF_DAILY_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[PP_RND].[ASSET_BP_INTIAL_PERIODS]\n Unknown [dbo].[TF_DAILY_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]\n Unknown [dbo].[TF_DAILY_ASSET_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PAYMENT_ITEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]\n Unknown [dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_CARD]\n Unknown [dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]\n Unknown [dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS_PAYMENT_NOTES]\n Unknown [dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_DATES]\n Unknown [dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_FX_RATES_DAY]\n Unknown [dbo].[TF_RW_PAYMENT_ITEMS_SPEND_VAL] has unresolved reference to object [RnD].[PP_RnD].[ASSET_LU_PAYMENT_ITEM]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[udf_GV_CoreBank_CV_ACCOUNT]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[udf_GV_CoreBank_CV_ACCOUNT] has unresolved reference to object [RnD].[GV_CoreBank].[CV_ACCOUNT]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[udf_GV_CoreBank_CV_PAYMENT_ITEMS]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[udf_GV_CoreBank_CV_PAYMENT_ITEMS] has unresolved reference to object [RnD].[GV_CoreBank].[CV_PAYMENT_ITEMS]",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[dbo].[VITALITY_MONEY_STATUS_V]",
+              "ObjectType": "Unknown",
+              "ImpactDetail": "Unknown [dbo].[VITALITY_MONEY_STATUS_V] has unresolved reference to object [RnD].[GV_FinancialVitality].[CV_BP_VITALITY_MONEY_STATUS]",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "CompatibilityLevel": "CompatLevel150",
+          "Category": "Compatibility",
+          "Severity": "Information",
+          "ChangeCategory": "Information",
+          "RuleId": "SyntaxError",
+          "Title": "Syntax issue on the source server",
+          "Impact": "While parsing the objects on the source database, one or more syntax issues were found. Syntax issues on the source database indicate that some objects contain unsupported syntax in the server version and database compatibility level.",
+          "Recommendation": "Review the list of objects and issues reported, fix the syntax errors, and re-run assessment before migrating this database.",
+          "MoreInfo": "()",
+          "ImpactedObjects": [
+            {
+              "Name": "[PP_RnD].[PC_Daily_ASSET_CREDIT_METRICS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "Failed to parse TSQL script for object '[PP_RnD].[PC_Daily_ASSET_CREDIT_METRICS_LOAD]' in database 'RnD'. Parse error details: 'Incorrect syntax near ).'.",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "[PP_RnD].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "Failed to parse TSQL script for object '[PP_RnD].[PC_Monthly_ASSET_CREDIT_METRICS_LOAD]' in database 'RnD'. Parse error details: 'Incorrect syntax near ).,Incorrect syntax near TRY.'.",
+              "SuggestedFixes": []
+            }
+          ]
+        }
+      ],
+      "Name": "RnD",
+      "SizeMB": 4337738.9375,
+      "ServerVersion": "15.0.4138.2",
+      "ServerEdition": "Standard Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel150",
+      "ServerName": "DBPSQLANA01"
+    }
+  ],
+  "ServerInstances": [
+    {
+      "ServerName": "DBPSQLANACLT01",
+      "Version": "15.0.4138.2",
+      "Status": "Completed",
+      "AssessmentRecommendations": [
+        {
+          "Category": "FeatureParity",
+          "Severity": "Information",
+          "FeatureParityCategory": "UnsupportedFeature",
+          "RuleId": "AgentJobs",
+          "Title": "SQL Server Agent jobs are not available in Azure SQL Database",
+          "Impact": "SQL Server Agent is a Microsoft Windows service that executes scheduled administrative tasks, which are called jobs in SQL Server. SQL Server Agent jobs are not available in Azure SQL Database.",
+          "Recommendation": "Use Elastic Database Jobs (preview), which are the replacement for SQL Server Agent jobs in Azure SQL Database. Elastic Database Jobs for Azure SQL Database allow you to reliably execute T-SQL scripts that span multiple databases while automatically retrying and providing eventual completion guarantees.  Alternatively consider migrating to Azure SQL Managed Instance or SQL Server on Azure Virtual Machines.",
+          "MoreInfo": "Getting started with Elastic Database Jobs (Preview) (https://docs.microsoft.com/en-us/azure/azure-sql/database/elastic-jobs-overview)",
+          "ImpactedObjects": [
+            {
+              "Name": "Altris",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Blocking Report",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Cleanup_Daily_Patch",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "CommandLog Cleanup",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Daily_Transactions",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "DatabaseBackup - SYSTEM_DATABASES - FULL",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "DatabaseBackup - USER_DATABASES - DIFF",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "DatabaseBackup - USER_DATABASES - FULL",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "DatabaseBackup - USER_DATABASES - LOG",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "DatabaseIntegrityCheck - SYSTEM_DATABASES",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "DatabaseIntegrityCheck - USER_DATABASES",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Deadlock Report",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "FIN_MA_2_6_12",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Fin_MA_Test_Run",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "IFMDB_Cube_Processing",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Import Miles",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Import_ClientLogin",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Import_LifePolicyDebitOrders",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Import_Travel",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "IndexOptimize - USER_DATABASES",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Load_CorpVitality",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Load_Netezza_Batch1",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Load_Netezza_Batch2",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Load_Netezza_Batch3",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Maintainance Tasks - Reindexing",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Once_Off_PP_Finance_Margin_Analysis_Report",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Output File Cleanup",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "PP_Finance_Margin_Analysis_Report",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Running Queries",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Run_cred_metrics",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Run_EIS_SE_Spend_Val",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "sp_delete_backuphistory",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Statistics Update - USER_DATABASES",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Step6 Margins",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "test",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Vitality",
+              "ObjectType": "Job",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "Category": "FeatureParity",
+          "Severity": "Information",
+          "FeatureParityCategory": "PartiallySupportedFeature",
+          "RuleId": "ServerCredentials",
+          "Title": "Server scoped credential is not supported in Azure SQL Database",
+          "Impact": "A credential is a record that contains the authentication information (credentials) required to connect to a resource outside SQL Server. Azure SQL Database supports database credentials, but not the ones created at the SQL Server scope.",
+          "Recommendation": "Azure SQL Database supports database scoped credentials. Convert server scoped credentials to database scoped credentials. Alternatively migrate to Azure SQL Managed Instance or SQL Server on Azure Virtual Machine.",
+          "MoreInfo": "<a href=\"https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-scoped-credential-transact-sql?redirectedfrom=MSDN&view=sql-server-ver15\">Creating database scoped credential</a>",
+          "ImpactedObjects": [
+            {
+              "Name": "Sql Service Account",
+              "ObjectType": "Server-level credential",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "Category": "FeatureParity",
+          "Severity": "Information",
+          "FeatureParityCategory": "UnsupportedFeature",
+          "RuleId": "DatabaseMail",
+          "Title": "Database Mail is not supported in Azure SQL Database.",
+          "Impact": "This server uses the Database Mail feature, which is not supported in Azure SQL Database.",
+          "Recommendation": "Consider migrating to Azure SQL Managed Instance or SQL Server on Azure Virtual Machine that supports Database Mail. Alternatively, consider using Azure functions and Sendgrid to accomplish mail functionality on Azure SQL Database.",
+          "MoreInfo": "Send email from Azure SQL Database using Azure Functions (https://github.com/microsoft/DataMigrationTeam/tree/master/IP%20and%20Scripts/AF%20SendMail)",
+          "ImpactedObjects": [
+            {
+              "Name": "[SqlAdmin].[DB_IT_SQL_DBA]",
+              "ObjectType": "Database mail",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "Category": "FeatureParity",
+          "Severity": "Information",
+          "FeatureParityCategory": "PartiallySupportedFeature",
+          "RuleId": "ServerAudits",
+          "Title": "Server Audits is not supported in Azure SQL Database.",
+          "Impact": "Auditing an instance of the SQL Server Database Engine or an individual database involves tracking and logging events that occur on the Database Engine. SQL Server audit lets you create server audits, which can contain server audit specifications for server level events, and database audit specifications for database level events. Server audits are not supported in Azure SQL Database, use database audits as a replacement.",
+          "Recommendation": "Consider Azure SQL Database audit features to replace Server Audits.  Azure SQL supports audit, and the features are richer than SQL Server. Azure SQL database can audit various database actions and events, including: Access to data, Schema changes (DDL), Data changes (DML), Accounts, roles, and permissions (DCL, Security exceptions. Azure SQL Database Auditing increases an organization's ability to gain deep insight into events and changes that occur within their SQL database, including updates and queries against the data. Alternatively migrate to Azure SQL Managed Instance or SQL Server on Azure Virtual Machine.",
+          "MoreInfo": "Auditing for Azure SQL Database (https://docs.microsoft.com/en-us/azure/azure-sql/database/auditing-overview)",
+          "ImpactedObjects": [
+            {
+              "Name": "Audit",
+              "ObjectType": "Server audit",
+              "ImpactDetail": "",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "Category": "FeatureParity",
+          "Severity": "Error",
+          "FeatureParityCategory": "UnsupportedFeature",
+          "RuleId": "LinkedServer",
+          "Title": "Linked server functionality is not supported in Azure SQL Database",
+          "Impact": "Linked servers enable the SQL Server Database Engine to execute commands against OLE DB data sources outside of the instance of SQL Server.",
+          "Recommendation": "Azure SQL Database does not support linked server functionality. The following actions are recommended to eliminate the need for linked servers: 1. Identify the dependent datasets from remote SQL servers and consider moving these into the database being migrated. 2. Migrate the dependent database(s) to Azure SQL Database and use ‘Elastic Database Query’ functionality (Currently in preview) to query across Azure SQL databases 3. Migrate to Azure SQL Managed Instance if the remote server is SQL Server as well 4. Migrate to SQL Server on Azure Virtual Machine.",
+          "MoreInfo": "Check Azure SQL Database elastic database query (Currently in preview) (https://docs.microsoft.com/en-us/azure/azure-sql/database/elastic-query-overview)",
+          "ImpactedObjects": [
+            {
+              "Name": "RnD",
+              "ObjectType": "Databases",
+              "ImpactDetail": null,
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "Category": "FeatureParity",
+          "Severity": "Warning",
+          "FeatureParityCategory": "PartiallySupportedFeature",
+          "RuleId": "CrossDatabaseReferences",
+          "Title": "Cross-database queries are not supported in Azure SQL Database",
+          "Impact": "Databases on this server use cross-database queries, which are not supported in Azure SQL Database.",
+          "Recommendation": "Azure SQL Database does not support cross-database queries. The following actions are recommended: 1. Migrate the dependent database(s) to Azure SQL Database and use 'Elastic Database Query' (Currently in preview) functionality to query across Azure SQL databases 2. Move the dependent datasets from other databases into the database that is being migrated 3. Migrate to Azure SQL Managed Instance 4. Migrate to SQL Server on Azure Virtual Machine.",
+          "MoreInfo": "Check Azure SQL Database elastic database query (Currently in preview) (https://docs.microsoft.com/en-us/azure/azure-sql/database/elastic-query-overview)",
+          "ImpactedObjects": [
+            {
+              "Name": "RnD",
+              "ObjectType": "Databases",
+              "ImpactDetail": null,
+              "SuggestedFixes": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "SourcePlatform": "SqlOnPrem",
+  "Status": "Completed",
+  "StartedOn": "2022-10-26T10:04:07.1733578+00:00",
+  "EndedOn": "2022-10-26T10:04:19.9947286+00:00",
+  "EvaluateFeatureRecommendations": false,
+  "EvaluateCompatibilityIssues": true,
+  "EvaluateFeatureParity": true,
+  "TargetPlatform": "AzureSqlDatabase",
+  "DmaVersion": {}
+}

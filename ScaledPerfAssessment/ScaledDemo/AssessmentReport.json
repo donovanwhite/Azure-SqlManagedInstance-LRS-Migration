@@ -1,0 +1,95 @@
+{
+  "Name": "TestAssessment",
+  "Databases": [
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [
+        {
+          "CompatibilityLevel": "CompatLevel140",
+          "Category": "Compatibility",
+          "Severity": "Warning",
+          "ChangeCategory": "BehaviorChange",
+          "RuleId": "Microsoft.Rules.Data.Upgrade.UR00040",
+          "Title": "Full-Text Search has changed since SQL Server 2008",
+          "Impact": "Full-Text Search has changed since SQL Server 2008.",
+          "Recommendation": "Many full-text search options and settings have changed. Therefore, when you upgrade to SQL Server 2014 or SQL Server 2016  Full-Text Search, some of your settings might need modification. We recommend you to test your applications leveraging the Full-Text features.",
+          "MoreInfo": "Breaking Changes to Full-Text Search (https://go.microsoft.com/fwlink/?LinkId=798556)",
+          "ImpactedObjects": [
+            {
+              "Name": "HumanResources.JobCandidate",
+              "ObjectType": "FullTextIndex",
+              "ImpactDetail": "Full-Text indexes Full-text Index on [HumanResources].[JobCandidate] found.",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Production.Document",
+              "ObjectType": "FullTextIndex",
+              "ImpactDetail": "Full-Text indexes Full-text Index on [Production].[Document] found.",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Production.ProductReview",
+              "ObjectType": "FullTextIndex",
+              "ImpactDetail": "Full-Text indexes Full-text Index on [Production].[ProductReview] found.",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "CompatibilityLevel": "CompatLevel150",
+          "Category": "Compatibility",
+          "Severity": "Warning",
+          "ChangeCategory": "BehaviorChange",
+          "RuleId": "Microsoft.Rules.Data.Upgrade.UR00040",
+          "Title": "Full-Text Search has changed since SQL Server 2008",
+          "Impact": "Full-Text Search has changed since SQL Server 2008.",
+          "Recommendation": "Many full-text search options and settings have changed. Therefore, when you upgrade to SQL Server 2014 or SQL Server 2016  Full-Text Search, some of your settings might need modification. We recommend you to test your applications leveraging the Full-Text features.",
+          "MoreInfo": "Breaking Changes to Full-Text Search (https://go.microsoft.com/fwlink/?LinkId=798556)",
+          "ImpactedObjects": [
+            {
+              "Name": "HumanResources.JobCandidate",
+              "ObjectType": "FullTextIndex",
+              "ImpactDetail": "Full-Text indexes Full-text Index on [HumanResources].[JobCandidate] found.",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Production.Document",
+              "ObjectType": "FullTextIndex",
+              "ImpactDetail": "Full-Text indexes Full-text Index on [Production].[Document] found.",
+              "SuggestedFixes": []
+            },
+            {
+              "Name": "Production.ProductReview",
+              "ObjectType": "FullTextIndex",
+              "ImpactDetail": "Full-Text indexes Full-text Index on [Production].[ProductReview] found.",
+              "SuggestedFixes": []
+            }
+          ]
+        }
+      ],
+      "Name": "AdventureWorks",
+      "SizeMB": 832.0,
+      "ServerVersion": "15.0.4198.2",
+      "ServerEdition": "Developer Edition (64-bit)",
+      "CompatibilityLevel": "CompatLevel140",
+      "ServerName": "LAPTOP-7ARP8SUO"
+    }
+  ],
+  "ServerInstances": [
+    {
+      "ServerName": "LAPTOP-7ARP8SUO",
+      "Version": "15.0.4198.2",
+      "Status": "Completed",
+      "AssessmentRecommendations": []
+    }
+  ],
+  "SourcePlatform": "SqlOnPrem",
+  "Status": "Completed",
+  "StartedOn": "2022-03-24T10:34:03.0552302+00:00",
+  "EndedOn": "2022-03-24T10:34:20.6893608+00:00",
+  "EvaluateFeatureRecommendations": false,
+  "EvaluateCompatibilityIssues": true,
+  "EvaluateFeatureParity": false,
+  "TargetPlatform": "SqlServerWindows2019",
+  "DmaVersion": {}
+}

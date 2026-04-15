@@ -1,0 +1,2 @@
+#Monitor progress os specified database migration
+az sql midb log-replay show -g hdinsights_rg --mi sqlshared001 -n adventureworks2019

@@ -1,0 +1,26 @@
+"Data Migration Assistant - Assessment Report:"
+"The analysis of your source SQL Server databases is complete. Based on your source server and which target server you plan to migrate, the below list can contain compatibility issues, breaking changes, behavior changes and deprecated features. While these issues may not prevent you from migrating to the target SQL Server platform, some of the breaking changes and deprecated features may disrupt your applications. We recommend addressing these compatibility issues before moving your database to production. 
+We also analyzed the databases and tables in your source server to provide a report on new SQL Server feature recommendations that might be applicable to your database environment. Implementing the below suggested recommendations would enhance your SQL Server experience and may also bring potential cost-savings and better performance."
+"Source: SQL Server"
+"Target: Azure SQL Database Managed Instance"
+"Duration: 0h 0m 3s"
+
+"Assessment Execution Summary - Databases"
+"Server Name","Server Version","Database Name","Status","Description"
+"LAPTOP-7ARP8SUO","SQL Server 2019","AdventureWorks","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","AdventureWorks2019","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","AdventureWorksDW2019","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","CensusDigitalCollectionMainCapi","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","sqlnexus","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","statssa","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+
+"Assessment Execution Summary - Server Instances"
+"Server Name","Server Version","Status","Description"
+"LAPTOP-7ARP8SUO","SQL Server 2019","Failed","We have experienced one or more failures: The server instance-level assessment of server 'LAPTOP-7ARP8SUO' failed."
+"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","Failed","We have experienced one or more failures: The server instance-level assessment of server 'LAPTOP-7ARP8SUO\SQL2019' failed."
+
+"Database Compatibility Issues"
+"Server Name","Server Version","Database Name","Issue","Source Compatibility Level","Impact","Target Compatibility Level","Compatibility Category","Recommendation","More Info","Impacted Object Type","Impacted Object","Impacted Object Details"
+
+"Feature Parity"
+"Server Name","Server Version","Feature Parity Category","Impacted Object","Impacted Object Details","Issue","Recommendation","Additional Reading"
