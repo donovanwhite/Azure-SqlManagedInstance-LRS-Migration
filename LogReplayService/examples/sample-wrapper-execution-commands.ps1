@@ -17,10 +17,10 @@ $StorageContainerSasToken = $null
 az login
 
 # 2. Select the subscription you want the wrappers to use
-az account set --subscription '0f8f3537-74fb-4305-ba01-38542e5800ae'
+az account set --subscription ''
 
 # 3. Optional but recommended: establish Az PowerShell context too
-Connect-AzAccount -Subscription '0f8f3537-74fb-4305-ba01-38542e5800ae'
+Connect-AzAccount -Subscription ''
 
 # If the tenant later requires MFA or a claims challenge, the wrappers can now fall back
 # to device-code authentication automatically. Leave AutoReauthenticate enabled unless you
