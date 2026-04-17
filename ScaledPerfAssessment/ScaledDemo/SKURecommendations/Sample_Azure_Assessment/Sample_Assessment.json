@@ -1,5 +1,5 @@
 {
-  "Name": "SampleAssessmentDb",
+  "Name": "SampleManagedInstanceAssessmentDb",
   "Databases": [
     {
       "Status": "Completed",
@@ -9,16 +9,16 @@
           "Category": "Compatibility",
           "Severity": "Error",
           "ChangeCategory": "MigrationBlocker",
-          "RuleId": "LinkedServer",
-          "Title": "Linked server functionality is not supported in Azure SQL Database",
-          "Impact": "Linked servers enable the SQL Server Database Engine to execute commands against OLE DB data sources outside of the instance of SQL Server.",
-          "Recommendation": "Azure SQL Database does not support linked server functionality. Remove or redesign linked-server dependencies before migration, or target Azure SQL Managed Instance when that dependency must be preserved.",
-          "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+          "RuleId": "InstanceLevelFeatureReview",
+          "Title": "Instance-level features require review before migration to Azure SQL Managed Instance",
+          "Impact": "Azure SQL Managed Instance preserves broad SQL Server compatibility, but instance-scoped features, jobs, and integrations still need workload-specific review before migration.",
+          "Recommendation": "Review SQL Agent jobs, server-level objects, and external integrations before migration to confirm they are supported and correctly configured on Azure SQL Managed Instance.",
+          "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/managed-instance/compare-sql-server-managed-instance",
           "ImpactedObjects": [
             {
-              "Name": "[dbo].[SampleLinkedServerProc]",
-              "ObjectType": "StoredProcedure",
-              "ImpactDetail": "StoredProcedure [dbo].[SampleLinkedServerProc] has unresolved reference to object [REMOTE-SQL].[SampleOperationalDb].[dbo].[SampleRemoteTable]",
+              "Name": "[msdb].[dbo].[SampleNightlyLoadJob]",
+              "ObjectType": "SqlAgentJob",
+              "ImpactDetail": "SQL Agent job [msdb].[dbo].[SampleNightlyLoadJob] should be reviewed for dependencies on local file paths, CmdExec steps, and external connectivity before migration.",
               "SuggestedFixes": []
             }
           ]
@@ -28,16 +28,16 @@
           "Category": "Compatibility",
           "Severity": "Warning",
           "ChangeCategory": "BreakingChange",
-          "RuleId": "CrossDatabaseReferences",
-          "Title": "Cross-database queries are not supported in Azure SQL Database",
-          "Impact": "Databases on this server use cross-database queries, which are not supported in Azure SQL Database.",
-          "Recommendation": "Move dependent data into the target database, use an Azure SQL pattern that supports distributed querying, or migrate to Azure SQL Managed Instance when cross-database behavior must remain.",
-          "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+          "RuleId": "ExternalDependencyReview",
+          "Title": "External file and network dependencies should be validated for Azure SQL Managed Instance",
+          "Impact": "Database workloads that rely on local file paths, network shares, or external endpoints often need configuration changes during migration.",
+          "Recommendation": "Validate file access patterns, agent-job execution context, and external connectivity requirements as part of Azure SQL Managed Instance migration planning.",
+          "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/managed-instance/compare-sql-server-managed-instance",
           "ImpactedObjects": [
             {
-              "Name": "[dbo].[SampleCrossDatabaseView]",
-              "ObjectType": "View",
-              "ImpactDetail": "View [dbo].[SampleCrossDatabaseView] references object [SampleWarehouse].[dbo].[SampleDimension] in another database.",
+              "Name": "[dbo].[SampleExportProcedure]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[SampleExportProcedure] should be reviewed for file-export or network-share dependencies before migration.",
               "SuggestedFixes": []
             }
           ]
@@ -58,14 +58,14 @@
       "Category": "FeatureParity",
       "Severity": "Error",
       "FeatureParityCategory": "UnsupportedFeature",
-      "RuleId": "LinkedServer",
-      "Title": "Linked server functionality is not supported in Azure SQL Database",
-      "Impact": "Linked server dependencies were detected in the assessed workload.",
-      "Recommendation": "Replace linked-server dependencies with supported integration patterns, or target Azure SQL Managed Instance when required.",
-      "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+      "RuleId": "InstanceLevelFeatureReview",
+      "Title": "Instance-level features require workload-specific validation on Azure SQL Managed Instance",
+      "Impact": "Server-level configuration and automation features were detected in the assessed workload.",
+      "Recommendation": "Review server-level objects and automation dependencies before migration to Azure SQL Managed Instance.",
+      "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/managed-instance/compare-sql-server-managed-instance",
       "ImpactedObjects": [
         {
-          "Name": "SampleAssessmentDb",
+          "Name": "SampleManagedInstanceAssessmentDb",
           "ObjectType": "Database",
           "ImpactDetail": null,
           "SuggestedFixes": []
@@ -76,14 +76,14 @@
       "Category": "FeatureParity",
       "Severity": "Warning",
       "FeatureParityCategory": "PartiallySupportedFeature",
-      "RuleId": "CrossDatabaseReferences",
-      "Title": "Cross-database queries are not supported in Azure SQL Database",
-      "Impact": "Cross-database references were detected in the assessed workload.",
-      "Recommendation": "Consolidate the dependency, use a supported distributed-query pattern, or choose Azure SQL Managed Instance when required.",
-      "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+      "RuleId": "ExternalDependencyReview",
+      "Title": "External dependencies should be validated for Azure SQL Managed Instance",
+      "Impact": "External file, job, or network dependencies were detected in the assessed workload.",
+      "Recommendation": "Validate dependency behavior and operational controls before migration to Azure SQL Managed Instance.",
+      "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/managed-instance/compare-sql-server-managed-instance",
       "ImpactedObjects": [
         {
-          "Name": "SampleAssessmentDb",
+          "Name": "SampleManagedInstanceAssessmentDb",
           "ObjectType": "Database",
           "ImpactDetail": null,
           "SuggestedFixes": []
@@ -98,6 +98,6 @@
   "EvaluateFeatureRecommendations": false,
   "EvaluateCompatibilityIssues": true,
   "EvaluateFeatureParity": true,
-  "TargetPlatform": "AzureSqlDatabase",
+  "TargetPlatform": "AzureSqlManagedInstance",
   "DmaVersion": {}
 }

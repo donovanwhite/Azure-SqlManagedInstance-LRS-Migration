@@ -1,5 +1,5 @@
 {
-  "outputFolder": "C:\\AzureDataMigrationAssessments\\AssessmentOutput\\ScaledDemo\\SKURecommendations\\Sample_Azure_Assessment",
+  "outputFolder": "C:\\AzureDataMigrationAssessments\\AssessmentOutput\\ScaledDemo\\SKURecommendations",
   "targetPlatform": "AzureSqlManagedInstance",
   "targetPercentile": 95,
   "scalingFactor": 100,
