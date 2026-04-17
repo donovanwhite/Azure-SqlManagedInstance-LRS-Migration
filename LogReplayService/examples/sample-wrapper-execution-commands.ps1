@@ -1,13 +1,13 @@
 # Sample execution commands for the Log Replay Service wrapper scripts.
-# Defaults below reflect the current environment values already built into the wrappers.
+# Defaults below use generic placeholder values that you should replace for your environment.
 
 # Default values
 $TenantId = $null
 $SubscriptionId = $null
 $AutoReauthenticate = $true
-$ResourceGroupName = 'rg_sql_dev_zan'
-$ManagedInstanceName = 'dev-sql-mi-001'
-$StorageAccountName = 'adlssqlbackups'
+$ResourceGroupName = 'rg-sql-mi-migration'
+$ManagedInstanceName = 'mi-target-001'
+$StorageAccountName = 'mystorageacct'
 $BackupRootPath = 'C:\SqlBackups'
 $StorageContainerSasToken = $null
 
@@ -17,10 +17,10 @@ $StorageContainerSasToken = $null
 az login
 
 # 2. Select the subscription you want the wrappers to use
-az account set --subscription ''
+az account set --subscription '<subscription-id>'
 
 # 3. Optional but recommended: establish Az PowerShell context too
-Connect-AzAccount -Subscription ''
+Connect-AzAccount -Subscription '<subscription-id>'
 
 # If the tenant later requires MFA or a claims challenge, the wrappers can now fall back
 # to device-code authentication automatically. Leave AutoReauthenticate enabled unless you
@@ -43,11 +43,11 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
 # you do not need -SelectedInstanceNames in the same command.
 .\wrapper-execution-multi-offline.ps1 `
     -AutoReauthenticate $true `
-    -ResourceGroupName 'rg_sql_dev_zan' `
-    -ManagedInstanceName 'dev-sql-mi-001' `
-    -StorageAccountName 'adlssqlbackups' `
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
     -BackupRootPath 'C:\SqlBackups' `
-    -SelectedDatabaseNames 'HP865-DONWHITE$SQL2022\2008DW', 'HP865-DONWHITE$SQL2022\TenantDataDb', 'HP865-DONWHITE$SQL2025\2008DW_1'
+    -SelectedDatabaseNames 'SQLHOST01$INST01\SalesDb', 'SQLHOST01$INST01\TenantDb', 'SQLHOST02$INST02\SalesDb_Archive'
 
 # 6. Run the online wrapper by using the current Azure context
 # For Entra-backed upload and LRS start, ensure the SQL MI managed identity can read the backup container.
@@ -58,30 +58,30 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
 
 # Offline: all discovered instances and databases under C:\SqlBackups
 .\wrapper-execution-multi-offline.ps1 `
-    -ResourceGroupName 'rg_sql_dev_zan' `
-    -ManagedInstanceName 'dev-sql-mi-001' `
-    -StorageAccountName 'adlssqlbackups' `
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
     -BackupRootPath 'C:\SqlBackups'
 
 # Offline: qualify a same-named database so only one source instance copy is restored
 .\wrapper-execution-multi-offline.ps1 `
-  -ResourceGroupName 'rg_sql_dev_zan' `
-  -ManagedInstanceName 'dev-sql-mi-001' `
-  -StorageAccountName 'adlssqlbackups' `
-  -BackupRootPath 'C:\SqlBackups' `
-  -SelectedDatabaseNames 'HP865-DONWHITE$SQL2022\2008DW', 'TenantDataDb'
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
+    -BackupRootPath 'C:\SqlBackups' `
+    -SelectedDatabaseNames 'SQLHOST01$INST01\SalesDb', 'TenantDb'
 
 # Online: selected instance and databases only
 .\wrapper-execution-multi-online.ps1 `
-  -ResourceGroupName 'rg_sql_dev_zan' `
-  -ManagedInstanceName 'dev-sql-mi-001' `
-  -StorageAccountName 'adlssqlbackups' `
-  -BackupRootPath 'C:\SqlBackups' `
-  -SelectedInstanceNames 'HP865-DONWHITE$SQL2022' `
-  -SelectedDatabaseNames '2008DW', 'TenantDataDb' `
-  -TransferPollSeconds 60 `
-  -StatusIntervalMinutes 2 `
-  -ScheduledCutoverLocalTime '2026-04-15 15:15'
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
+    -BackupRootPath 'C:\SqlBackups' `
+    -SelectedInstanceNames 'SQLHOST01$INST01' `
+    -SelectedDatabaseNames 'SalesDb', 'TenantDb' `
+    -TransferPollSeconds 60 `
+    -StatusIntervalMinutes 2 `
+    -ScheduledCutoverLocalTime '2026-04-15 15:15'
 
 
 # Notes
@@ -89,7 +89,9 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
 # - Offline SelectedDatabaseNames accepts either Database or Instance\Database (or Instance::Database).
 # - If every offline selected database is already instance-qualified, -SelectedInstanceNames is optional.
 # - Online wrapper starts the background uploader, starts online LRS, shows status snapshots,
-#   and waits for operator actions S, C, or Q.
+#   and waits for operator actions S, C, T, or Q.
+# - Online operator commands are: S = status now, C = immediate cutover,
+#   T = schedule or reschedule cutover, Q = quit monitor.
 # - Online mode still supports exactly one source instance, so database names there remain unambiguous.
 # - the SQL Managed Instance managed identity must be able to read the backup container.
 # - Each wrapper run writes reports under C:\AzureDataMigrationAssessments\LogReplayService\reports.
