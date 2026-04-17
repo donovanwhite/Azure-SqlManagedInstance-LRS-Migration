@@ -132,12 +132,14 @@ Primary entry points:
 
 Authentication behavior:
 
-- If the current Azure CLI or Az PowerShell session hits an MFA claims challenge or expired token, the wrappers can automatically fall back to device-code authentication unless `-AutoReauthenticate $false` is used.
-- The online wrapper may prompt for an AzCopy device login even when `az login` is already active. This is expected because the uploader runs as a separate background process and needs an auth context it can reuse independently.
 
 ## Expected backup layout
 
 The wrappers assume a source backup structure under `C:\SqlBackups` like this:
+
+This layout is compatible with the instance/database/backup-type folder convention commonly used with Ola Hallengren maintenance jobs:
+
+- https://ola.hallengren.com/
 
 ```text
 C:\SqlBackups\<instance>\<database>\FULL
@@ -148,8 +150,8 @@ C:\SqlBackups\<instance>\<database>\LOG
 Examples:
 
 ```text
-C:\SqlBackups\HP865-DONWHITE$SQL2022\2008DW\FULL\HP865-DONWHITE$SQL2022_2008DW_FULL_20260415_145144.bak
-C:\SqlBackups\HP865-DONWHITE$SQL2022\2008DW\LOG\HP865-DONWHITE$SQL2022_2008DW_LOG_20260415_145501.trn
+C:\SqlBackups\SQLHOST01$INST01\SalesDb\FULL\SQLHOST01$INST01_SalesDb_FULL_20260415_145144.bak
+C:\SqlBackups\SQLHOST01$INST01\SalesDb\LOG\SQLHOST01$INST01_SalesDb_LOG_20260415_145501.trn
 ```
 
 Notes:
@@ -170,11 +172,11 @@ Example:
 
 ```text
 Source:
-C:\SqlBackups\HP865-DONWHITE$SQL2022\2008DW\FULL
-C:\SqlBackups\HP865-DONWHITE$SQL2022\2008DW\LOG
+C:\SqlBackups\SQLHOST01$INST01\SalesDb\FULL
+C:\SqlBackups\SQLHOST01$INST01\SalesDb\LOG
 
 Destination:
-https://adlssqlbackups.dfs.core.windows.net/hp865-donwhite-sql2022/2008DW/
+https://mystorageacct.dfs.core.windows.net/sqlhost01-inst01/SalesDb/
 ```
 
 ## Quick start
@@ -203,9 +205,9 @@ Use the examples in `examples/sample-wrapper-execution-commands.ps1` for your cu
 
 ```powershell
 .\wrapper-execution-multi-offline.ps1 `
-  -ResourceGroupName 'rg_sql_dev_zan' `
-  -ManagedInstanceName 'dev-sql-mi-001' `
-  -StorageAccountName 'adlssqlbackups' `
+  -ResourceGroupName 'rg-sql-mi-migration' `
+  -ManagedInstanceName 'mi-target-001' `
+  -StorageAccountName 'mystorageacct' `
   -BackupRootPath 'C:\SqlBackups'
 ```
 
@@ -213,11 +215,11 @@ Use the examples in `examples/sample-wrapper-execution-commands.ps1` for your cu
 
 ```powershell
 .\wrapper-execution-multi-offline.ps1 `
-  -ResourceGroupName 'rg_sql_dev_zan' `
-  -ManagedInstanceName 'dev-sql-mi-001' `
-  -StorageAccountName 'adlssqlbackups' `
+  -ResourceGroupName 'rg-sql-mi-migration' `
+  -ManagedInstanceName 'mi-target-001' `
+  -StorageAccountName 'mystorageacct' `
   -BackupRootPath 'C:\SqlBackups' `
-  -SelectedInstanceNames 'HP865-DONWHITE$SQL2022','HP865-DONWHITE$SQL2025'
+  -SelectedInstanceNames 'SQLHOST01$INST01','SQLHOST02$INST02'
 ```
 
 ### Migrate a mixed set of databases across instances
@@ -225,11 +227,11 @@ Use the examples in `examples/sample-wrapper-execution-commands.ps1` for your cu
 ```powershell
 .\wrapper-execution-multi-offline.ps1 `
   -AutoReauthenticate $true `
-  -ResourceGroupName 'rg_sql_dev_zan' `
-  -ManagedInstanceName 'dev-sql-mi-001' `
-  -StorageAccountName 'adlssqlbackups' `
+  -ResourceGroupName 'rg-sql-mi-migration' `
+  -ManagedInstanceName 'mi-target-001' `
+  -StorageAccountName 'mystorageacct' `
   -BackupRootPath 'C:\SqlBackups' `
-  -SelectedDatabaseNames 'HP865-DONWHITE$SQL2022\2008DW', 'HP865-DONWHITE$SQL2022\TenantDataDb', 'HP865-DONWHITE$SQL2025\2008DW_1'
+  -SelectedDatabaseNames 'SQLHOST01$INST01\SalesDb', 'SQLHOST01$INST01\TenantDb', 'SQLHOST02$INST02\SalesDb_Archive'
 ```
 
 Selection rules:
@@ -253,12 +255,12 @@ Rules:
 
 ```powershell
 .\wrapper-execution-multi-online.ps1 `
-  -ResourceGroupName 'rg_sql_dev_zan' `
-  -ManagedInstanceName 'dev-sql-mi-001' `
-  -StorageAccountName 'adlssqlbackups' `
+  -ResourceGroupName 'rg-sql-mi-migration' `
+  -ManagedInstanceName 'mi-target-001' `
+  -StorageAccountName 'mystorageacct' `
   -BackupRootPath 'C:\SqlBackups' `
-  -SelectedInstanceNames 'HP865-DONWHITE$SQL2022' `
-  -SelectedDatabaseNames '2008DW', 'TenantDataDb' `
+  -SelectedInstanceNames 'SQLHOST01$INST01' `
+  -SelectedDatabaseNames 'SalesDb', 'TenantDb' `
   -TransferPollSeconds 60 `
   -StatusIntervalMinutes 2
 ```
@@ -267,12 +269,12 @@ Rules:
 
 ```powershell
 .\wrapper-execution-multi-online.ps1 `
-  -ResourceGroupName 'rg_sql_dev_zan' `
-  -ManagedInstanceName 'dev-sql-mi-001' `
-  -StorageAccountName 'adlssqlbackups' `
+  -ResourceGroupName 'rg-sql-mi-migration' `
+  -ManagedInstanceName 'mi-target-001' `
+  -StorageAccountName 'mystorageacct' `
   -BackupRootPath 'C:\SqlBackups' `
-  -SelectedInstanceNames 'HP865-DONWHITE$SQL2022' `
-  -SelectedDatabaseNames '2008DW', 'TenantDataDb' `
+  -SelectedInstanceNames 'SQLHOST01$INST01' `
+  -SelectedDatabaseNames 'SalesDb', 'TenantDb' `
   -TransferPollSeconds 60 `
   -StatusIntervalMinutes 2 `
   -ScheduledCutoverLocalTime '2026-04-15 15:15'

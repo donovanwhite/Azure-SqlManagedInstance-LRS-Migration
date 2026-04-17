@@ -19,6 +19,10 @@ It supports two modes:
 
 Use a flat folder per database. No nested subfolders like full or tran.
 
+The source-side instance/database/backup-type layout also aligns with common folder conventions used alongside Ola Hallengren maintenance jobs:
+
+- https://ola.hallengren.com/
+
 ```
 https://<storageaccount>.dfs.core.windows.net/<container>/db1/
 	db1_full_20240301.bak
@@ -81,7 +85,7 @@ PowerShell:
 .\lrs-guided.ps1 -Mode Online -CompleteOnlineCutover
 
 # Multiple databases using a template
-.\lrs-guided.ps1 -Mode Online -DatabaseNames db1,db2 -StorageContainerUriTemplate "https://storage.dfs.core.windows.net/container/{db}"
+.\lrs-guided.ps1 -Mode Online -DatabaseNames db1,db2 -StorageContainerUriTemplate "https://<storageaccount>.dfs.core.windows.net/<container>/{db}"
 ```
 
 ### Example config for multiple databases
@@ -91,7 +95,7 @@ PowerShell:
   "ResourceGroupName": "rg-migration",
   "InstanceName": "mi-prod",
   "DatabaseNames": ["db1", "db2"],
-  "StorageContainerUriTemplate": "https://storage.dfs.core.windows.net/container/{db}",
+  "StorageContainerUriTemplate": "https://<storageaccount>.dfs.core.windows.net/<container>/{db}",
   "StorageContainerIdentity": "ManagedIdentity",
   "LastBackupNames": {
     "db1": "db1_cutover.bak",
@@ -111,13 +115,13 @@ PowerShell:
 
 ```
 # Offline: copy a specific full backup plus optional diff and logs from a start file
-.\lrs-backup-transfer.ps1 -Mode Offline -SourcePath "D:\SqlBackups\db1" -FullBackupPath "D:\SqlBackups\db1\full" -FullBackupFile "db1_full_20240301.bak" -DiffPath "D:\SqlBackups\db1\diff" -TranPath "D:\SqlBackups\db1\tran" -TranStartFile "db1_log_20240302_001.trn" -StorageContainerUri "https://storage.dfs.core.windows.net/container/db1" -StorageAuthMode Sas -StorageContainerSasToken "<sas-token>" -IncludeDiffs
+.\lrs-backup-transfer.ps1 -Mode Offline -SourcePath "D:\SqlBackups\db1" -FullBackupPath "D:\SqlBackups\db1\full" -FullBackupFile "db1_full_20240301.bak" -DiffPath "D:\SqlBackups\db1\diff" -TranPath "D:\SqlBackups\db1\tran" -TranStartFile "db1_log_20240302_001.trn" -StorageContainerUri "https://<storageaccount>.dfs.core.windows.net/<container>/db1" -StorageAuthMode Sas -StorageContainerSasToken "<sas-token>" -IncludeDiffs
 
 # Online: initial copy then continuous log copy every 5 minutes
-.\lrs-backup-transfer.ps1 -Mode Online -SourcePath "D:\SqlBackups\db1" -FullBackupPath "D:\SqlBackups\db1\full" -FullBackupFile "db1_full_20240301.bak" -DiffPath "D:\SqlBackups\db1\diff" -TranPath "D:\SqlBackups\db1\tran" -TranStartFile "db1_log_20240302_001.trn" -StorageContainerUri "https://storage.dfs.core.windows.net/container/db1" -StorageAuthMode Sas -StorageContainerSasToken "<sas-token>" -IntervalSeconds 300 -IncludeDiffs
+.\lrs-backup-transfer.ps1 -Mode Online -SourcePath "D:\SqlBackups\db1" -FullBackupPath "D:\SqlBackups\db1\full" -FullBackupFile "db1_full_20240301.bak" -DiffPath "D:\SqlBackups\db1\diff" -TranPath "D:\SqlBackups\db1\tran" -TranStartFile "db1_log_20240302_001.trn" -StorageContainerUri "https://<storageaccount>.dfs.core.windows.net/<container>/db1" -StorageAuthMode Sas -StorageContainerSasToken "<sas-token>" -IntervalSeconds 300 -IncludeDiffs
 
 # Multiple databases using a template
-.\lrs-backup-transfer.ps1 -Mode Online -SourcePathBase "D:\SqlBackups" -DatabaseNames db1,db2 -FullBackupPath "D:\SqlBackups\{db}\full" -FullBackupFile "{db}_full_20240301.bak" -DiffPath "D:\SqlBackups\{db}\diff" -TranPath "D:\SqlBackups\{db}\tran" -TranStartFile "{db}_log_20240302_001.trn" -StorageContainerUriTemplate "https://storage.dfs.core.windows.net/container/{db}" -StorageAuthMode Sas -StorageContainerSasToken "<sas-token>" -IntervalSeconds 300 -IncludeDiffs
+.\lrs-backup-transfer.ps1 -Mode Online -SourcePathBase "D:\SqlBackups" -DatabaseNames db1,db2 -FullBackupPath "D:\SqlBackups\{db}\full" -FullBackupFile "{db}_full_20240301.bak" -DiffPath "D:\SqlBackups\{db}\diff" -TranPath "D:\SqlBackups\{db}\tran" -TranStartFile "{db}_log_20240302_001.trn" -StorageContainerUriTemplate "https://<storageaccount>.dfs.core.windows.net/<container>/{db}" -StorageAuthMode Sas -StorageContainerSasToken "<sas-token>" -IntervalSeconds 300 -IncludeDiffs
 ```
 
 Notes:
