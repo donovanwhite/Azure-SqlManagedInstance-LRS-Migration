@@ -1,0 +1,8 @@
+ServerName,DatabaseName,DatabaseFileName,FileType,TimeDataCollected,CounterName,AggregatorType,Value
+SAMPLEHOST02,SampleWarehouseDb01,,,2022-10-25 09:13:46,DCS,Mean,78212.48
+SAMPLEHOST02,SampleWarehouseDb01,,,2022-10-25 09:13:46,DCS,Max,81443.18
+SAMPLEHOST02,SampleAdminDb01,,,2022-10-25 09:13:46,DCS,Mean,0.36
+SAMPLEHOST02,SampleAdminDb01,E:\MSSQL\Data\SampleAdminDb01.mdf,ROWS,2022-10-25 09:13:46,FRM,Mean,0
+SAMPLEHOST02,SampleAdminDb01,G:\MSSQL\Log\SampleAdminDb01_log.ldf,LOG,2022-10-25 09:13:46,FWM,Occurence,18
+SAMPLEHOST02,SampleWarehouseDb01,E:\MSSQL\Data\SampleWarehouseDb01.mdf,ROWS,2022-10-25 09:13:46,FRM,Mean,144
+SAMPLEHOST02,SampleWarehouseDb01,G:\MSSQL\Log\SampleWarehouseDb01_log.ldf,LOG,2022-10-25 09:13:46,FNR,Max,47

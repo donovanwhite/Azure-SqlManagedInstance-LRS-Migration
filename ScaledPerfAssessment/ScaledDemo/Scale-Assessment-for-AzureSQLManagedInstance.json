@@ -9,7 +9,7 @@
       "ServerVersion": "15.0.4198.2",
       "ServerEdition": "Developer Edition (64-bit)",
       "CompatibilityLevel": "CompatLevel150",
-      "ServerName": "LAPTOP-7ARP8SUO"
+      "ServerName": "SAMPLEHOST01"
     },
     {
       "Status": "Completed",
@@ -19,7 +19,7 @@
       "ServerVersion": "15.0.4198.2",
       "ServerEdition": "Developer Edition (64-bit)",
       "CompatibilityLevel": "CompatLevel150",
-      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+      "ServerName": "SAMPLEHOST01\\SQL2019"
     },
     {
       "Status": "Completed",
@@ -29,17 +29,17 @@
       "ServerVersion": "15.0.4198.2",
       "ServerEdition": "Developer Edition (64-bit)",
       "CompatibilityLevel": "CompatLevel140",
-      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+      "ServerName": "SAMPLEHOST01\\SQL2019"
     },
     {
       "Status": "Completed",
       "AssessmentRecommendations": [],
-      "Name": "CensusDigitalCollectionMainCapi",
+      "Name": "SampleAppDb01",
       "SizeMB": 16.0,
       "ServerVersion": "15.0.4198.2",
       "ServerEdition": "Developer Edition (64-bit)",
       "CompatibilityLevel": "CompatLevel150",
-      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+      "ServerName": "SAMPLEHOST01\\SQL2019"
     },
     {
       "Status": "Completed",
@@ -49,28 +49,28 @@
       "ServerVersion": "15.0.4198.2",
       "ServerEdition": "Developer Edition (64-bit)",
       "CompatibilityLevel": "CompatLevel150",
-      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+      "ServerName": "SAMPLEHOST01\\SQL2019"
     },
     {
       "Status": "Completed",
       "AssessmentRecommendations": [],
-      "Name": "statssa",
+      "Name": "SampleUtilityDb01",
       "SizeMB": 58.0,
       "ServerVersion": "15.0.4198.2",
       "ServerEdition": "Developer Edition (64-bit)",
       "CompatibilityLevel": "CompatLevel150",
-      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019"
+      "ServerName": "SAMPLEHOST01\\SQL2019"
     }
   ],
   "ServerInstances": [
     {
-      "ServerName": "LAPTOP-7ARP8SUO",
+      "ServerName": "SAMPLEHOST01",
       "Version": "15.0.4198.2",
       "Status": "Error",
       "AssessmentRecommendations": []
     },
     {
-      "ServerName": "LAPTOP-7ARP8SUO\\SQL2019",
+      "ServerName": "SAMPLEHOST01\\SQL2019",
       "Version": "15.0.4198.2",
       "Status": "Error",
       "AssessmentRecommendations": []
@@ -86,3 +86,4 @@
   "TargetPlatform": "ManagedSqlServer",
   "DmaVersion": {}
 }
+

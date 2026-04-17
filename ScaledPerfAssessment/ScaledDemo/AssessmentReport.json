@@ -72,12 +72,12 @@
       "ServerVersion": "15.0.4198.2",
       "ServerEdition": "Developer Edition (64-bit)",
       "CompatibilityLevel": "CompatLevel140",
-      "ServerName": "LAPTOP-7ARP8SUO"
+      "ServerName": "SAMPLEHOST01"
     }
   ],
   "ServerInstances": [
     {
-      "ServerName": "LAPTOP-7ARP8SUO",
+      "ServerName": "SAMPLEHOST01",
       "Version": "15.0.4198.2",
       "Status": "Completed",
       "AssessmentRecommendations": []

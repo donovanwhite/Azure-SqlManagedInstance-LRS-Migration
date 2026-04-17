@@ -1,0 +1,103 @@
+{
+  "Name": "SampleAssessmentDb",
+  "Databases": [
+    {
+      "Status": "Completed",
+      "AssessmentRecommendations": [
+        {
+          "CompatibilityLevel": "CompatLevel150",
+          "Category": "Compatibility",
+          "Severity": "Error",
+          "ChangeCategory": "MigrationBlocker",
+          "RuleId": "LinkedServer",
+          "Title": "Linked server functionality is not supported in Azure SQL Database",
+          "Impact": "Linked servers enable the SQL Server Database Engine to execute commands against OLE DB data sources outside of the instance of SQL Server.",
+          "Recommendation": "Azure SQL Database does not support linked server functionality. Remove or redesign linked-server dependencies before migration, or target Azure SQL Managed Instance when that dependency must be preserved.",
+          "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+          "ImpactedObjects": [
+            {
+              "Name": "[dbo].[SampleLinkedServerProc]",
+              "ObjectType": "StoredProcedure",
+              "ImpactDetail": "StoredProcedure [dbo].[SampleLinkedServerProc] has unresolved reference to object [REMOTE-SQL].[SampleOperationalDb].[dbo].[SampleRemoteTable]",
+              "SuggestedFixes": []
+            }
+          ]
+        },
+        {
+          "CompatibilityLevel": "CompatLevel150",
+          "Category": "Compatibility",
+          "Severity": "Warning",
+          "ChangeCategory": "BreakingChange",
+          "RuleId": "CrossDatabaseReferences",
+          "Title": "Cross-database queries are not supported in Azure SQL Database",
+          "Impact": "Databases on this server use cross-database queries, which are not supported in Azure SQL Database.",
+          "Recommendation": "Move dependent data into the target database, use an Azure SQL pattern that supports distributed querying, or migrate to Azure SQL Managed Instance when cross-database behavior must remain.",
+          "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+          "ImpactedObjects": [
+            {
+              "Name": "[dbo].[SampleCrossDatabaseView]",
+              "ObjectType": "View",
+              "ImpactDetail": "View [dbo].[SampleCrossDatabaseView] references object [SampleWarehouse].[dbo].[SampleDimension] in another database.",
+              "SuggestedFixes": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "ServerInstances": [
+    {
+      "ServerName": "SAMPLEHOST02",
+      "Version": "15.0.x",
+      "Status": "Completed",
+      "AssessmentRecommendations": []
+    }
+  ],
+  "FeatureParityRecommendations": [
+    {
+      "Category": "FeatureParity",
+      "Severity": "Error",
+      "FeatureParityCategory": "UnsupportedFeature",
+      "RuleId": "LinkedServer",
+      "Title": "Linked server functionality is not supported in Azure SQL Database",
+      "Impact": "Linked server dependencies were detected in the assessed workload.",
+      "Recommendation": "Replace linked-server dependencies with supported integration patterns, or target Azure SQL Managed Instance when required.",
+      "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+      "ImpactedObjects": [
+        {
+          "Name": "SampleAssessmentDb",
+          "ObjectType": "Database",
+          "ImpactDetail": null,
+          "SuggestedFixes": []
+        }
+      ]
+    },
+    {
+      "Category": "FeatureParity",
+      "Severity": "Warning",
+      "FeatureParityCategory": "PartiallySupportedFeature",
+      "RuleId": "CrossDatabaseReferences",
+      "Title": "Cross-database queries are not supported in Azure SQL Database",
+      "Impact": "Cross-database references were detected in the assessed workload.",
+      "Recommendation": "Consolidate the dependency, use a supported distributed-query pattern, or choose Azure SQL Managed Instance when required.",
+      "MoreInfo": "https://learn.microsoft.com/azure/azure-sql/database/elastic-query-overview",
+      "ImpactedObjects": [
+        {
+          "Name": "SampleAssessmentDb",
+          "ObjectType": "Database",
+          "ImpactDetail": null,
+          "SuggestedFixes": []
+        }
+      ]
+    }
+  ],
+  "SourcePlatform": "SqlOnPrem",
+  "Status": "Completed",
+  "StartedOn": "2022-10-26T10:04:07.1733578+00:00",
+  "EndedOn": "2022-10-26T10:04:19.9947286+00:00",
+  "EvaluateFeatureRecommendations": false,
+  "EvaluateCompatibilityIssues": true,
+  "EvaluateFeatureParity": true,
+  "TargetPlatform": "AzureSqlDatabase",
+  "DmaVersion": {}
+}

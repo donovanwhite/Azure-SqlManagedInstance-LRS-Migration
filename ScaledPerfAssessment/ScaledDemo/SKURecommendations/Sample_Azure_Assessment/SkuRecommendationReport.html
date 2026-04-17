@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Azure SQL SKU Recommendation Report</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; margin: 2rem; color: #1f1f1f; }
+    h1, h2 { margin-bottom: 0.5rem; }
+    table { border-collapse: collapse; width: 100%; max-width: 900px; margin-top: 1rem; }
+    th, td { border: 1px solid #d0d0d0; padding: 0.6rem; text-align: left; }
+    th { background: #f3f6f9; }
+    code { background: #f5f5f5; padding: 0.1rem 0.3rem; }
+  </style>
+</head>
+<body>
+  <h1>Azure SQL SKU Recommendation Report</h1>
+  <p>This is a sanitized sample report for documentation purposes.</p>
+  <p>Full JSON sample: <code>Sample_Azure_Assessment\SkuRecommendationReport.json</code></p>
+
+  <h2>Recommended SKU</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Server</th>
+        <th>Platform</th>
+        <th>Tier</th>
+        <th>vCores</th>
+        <th>Storage (GB)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>SAMPLEHOST02</td>
+        <td>Azure SQL Managed Instance</td>
+        <td>BusinessCritical</td>
+        <td>32</td>
+        <td>4064</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Sample Workload Summary</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database</th>
+        <th>CPU Cores</th>
+        <th>Storage (MB)</th>
+        <th>Memory (MB)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>SampleAdminDb01</td>
+        <td>0.16</td>
+        <td>904</td>
+        <td>1.55</td>
+      </tr>
+      <tr>
+        <td>SampleWarehouseDb01</td>
+        <td>9.33</td>
+        <td>4152231</td>
+        <td>87313.35</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

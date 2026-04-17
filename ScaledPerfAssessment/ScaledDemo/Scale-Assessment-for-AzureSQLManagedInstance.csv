@@ -7,20 +7,22 @@ We also analyzed the databases and tables in your source server to provide a rep
 
 "Assessment Execution Summary - Databases"
 "Server Name","Server Version","Database Name","Status","Description"
-"LAPTOP-7ARP8SUO","SQL Server 2019","AdventureWorks","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
-"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","AdventureWorks2019","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
-"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","AdventureWorksDW2019","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
-"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","CensusDigitalCollectionMainCapi","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
-"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","sqlnexus","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
-"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","statssa","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"SAMPLEHOST01","SQL Server 2019","AdventureWorks","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"SAMPLEHOST01\SQL2019","SQL Server 2019","AdventureWorks2019","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"SAMPLEHOST01\SQL2019","SQL Server 2019","AdventureWorksDW2019","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"SAMPLEHOST01\SQL2019","SQL Server 2019","SampleAppDb01","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"SAMPLEHOST01\SQL2019","SQL Server 2019","sqlnexus","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
+"SAMPLEHOST01\SQL2019","SQL Server 2019","SampleUtilityDb01","Success","Assessment was successfully completed: 0 issues and 0 recommendations"
 
 "Assessment Execution Summary - Server Instances"
 "Server Name","Server Version","Status","Description"
-"LAPTOP-7ARP8SUO","SQL Server 2019","Failed","We have experienced one or more failures: The server instance-level assessment of server 'LAPTOP-7ARP8SUO' failed."
-"LAPTOP-7ARP8SUO\SQL2019","SQL Server 2019","Failed","We have experienced one or more failures: The server instance-level assessment of server 'LAPTOP-7ARP8SUO\SQL2019' failed."
+"SAMPLEHOST01","SQL Server 2019","Failed","We have experienced one or more failures: The server instance-level assessment of server 'SAMPLEHOST01' failed."
+"SAMPLEHOST01\SQL2019","SQL Server 2019","Failed","We have experienced one or more failures: The server instance-level assessment of server 'SAMPLEHOST01\SQL2019' failed."
 
 "Database Compatibility Issues"
 "Server Name","Server Version","Database Name","Issue","Source Compatibility Level","Impact","Target Compatibility Level","Compatibility Category","Recommendation","More Info","Impacted Object Type","Impacted Object","Impacted Object Details"
 
 "Feature Parity"
 "Server Name","Server Version","Feature Parity Category","Impacted Object","Impacted Object Details","Issue","Recommendation","Additional Reading"
+
+

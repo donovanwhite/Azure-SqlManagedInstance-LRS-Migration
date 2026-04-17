@@ -1,0 +1,57 @@
+{
+  "Servers": [
+    {
+      "ServerName": "SAMPLEHOST02",
+      "TargetPlatform": "AzureSqlManagedInstance",
+      "Requirements": {
+        "CpuRequirementInCores": 9.33,
+        "DataStorageRequirementInMB": 4153135.0,
+        "LogStorageRequirementInMB": 72.0,
+        "MemoryRequirementInMB": 87314.9,
+        "DataIOPSRequirement": 127744.7,
+        "LogIOPSRequirement": 1.29,
+        "IOLatencyRequirementInMs": 1.79,
+        "IOThroughputRequirementInMBps": 6408.44,
+        "TempDBSizeInMB": 513152.0,
+        "AggregationTargetPercentile": 95,
+        "PerfDataCollectionIntervalInSeconds": 5,
+        "SqlServerHostRequirements": {
+          "HostNICCount": 1
+        },
+        "DatabaseLevelRequirements": [
+          {
+            "DatabaseName": "SampleAdminDb01",
+            "CpuRequirementInCores": 0.16,
+            "DataStorageRequirementInMB": 904.0,
+            "LogStorageRequirementInMB": 72.0,
+            "MemoryRequirementInMB": 1.55
+          },
+          {
+            "DatabaseName": "SampleWarehouseDb01",
+            "CpuRequirementInCores": 9.33,
+            "DataStorageRequirementInMB": 4152231.0,
+            "LogStorageRequirementInMB": 0.0,
+            "MemoryRequirementInMB": 87313.35
+          }
+        ]
+      },
+      "Recommendations": [
+        {
+          "RecommendedSku": {
+            "Platform": "Azure SQL Managed Instance",
+            "HardwareGeneration": "Gen5",
+            "ServiceTier": "BusinessCritical",
+            "SizeInVCores": 32,
+            "StorageSizeInGb": 4064.0
+          },
+          "Justifications": [
+            "The sample workload requires more than 2 TB of storage, so a smaller SKU is excluded.",
+            "The recommendation satisfies the sample workload's compute, memory, storage, and IO requirements.",
+            "The Business Critical tier is selected to satisfy the sample workload's latency and IOPS profile."
+          ]
+        }
+      ]
+    }
+  ],
+  "TimeCreated": "2022-10-28T10:31:15.8573681Z"
+}

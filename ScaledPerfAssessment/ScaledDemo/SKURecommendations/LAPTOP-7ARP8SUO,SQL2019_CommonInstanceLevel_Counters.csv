@@ -1,2 +1,0 @@
-ServerName,Edition,HyperthreadRatio,IsClustered,IsHadrEnabled,LogicalCpuCount,MaxServerMemoryInUse,NumberCoresUsed,NumberOfUserDatabases,PhysicalCpuCount,ProductVersion,SqlStartTime,SumOfUserDatabasesSize,TempDbSize,NumOfLogins,TimeDataCollected
-LAPTOP-7ARP8SUO\SQL2019,Developer Edition (64-bit),8,False,False,8,2147483647,8,5,1,15.0.4236.7,2022-08-10 04:21:15,20920,72,16,2022-08-16 08:37:51

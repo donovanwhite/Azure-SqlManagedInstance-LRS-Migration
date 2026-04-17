@@ -1,0 +1,7 @@
+ServerName,DatabaseName,LogicalName,PhysicalFullName,FileType,SizeMB,IsMemoryOptimizedDataOptionEnabled,TimeDataCollected
+SAMPLEHOST02,SampleAdminDb01,SampleAdminDb01,E:\MSSQL\Data\SampleAdminDb01.mdf,Rows,904,False,2022-10-26 09:45:29
+SAMPLEHOST02,SampleAdminDb01,SampleAdminDb01_log,G:\MSSQL\Log\SampleAdminDb01_log.ldf,Log,72,False,2022-10-26 09:45:29
+SAMPLEHOST02,SampleWarehouseDb01,SampleWarehouseDb01,E:\MSSQL\Data\SampleWarehouseDb01.mdf,Rows,1442176,False,2022-10-26 09:45:29
+SAMPLEHOST02,SampleWarehouseDb01,SampleWarehouseDb01_log,G:\MSSQL\Log\SampleWarehouseDb01_log.ldf,Log,175850.75,False,2022-10-26 09:45:29
+SAMPLEHOST02,SampleWarehouseDb01,SampleWarehouseDb01_data02,E:\MSSQL\Data\SampleWarehouseDb01_data02.ndf,Rows,478931,False,2022-10-26 09:45:29
+SAMPLEHOST02,SampleWarehouseDb01,SampleWarehouseDb01_data03,G:\MSSQL\Data\SampleWarehouseDb01_data03.ndf,Rows,2231124,False,2022-10-26 09:45:29
