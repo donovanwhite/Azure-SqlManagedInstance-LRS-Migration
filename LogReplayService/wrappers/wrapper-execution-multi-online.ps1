@@ -20,7 +20,20 @@ param(
     [Nullable[datetime]]$ScheduledCutoverLocalTime,
     [string]$TransferStatePath,
     [string]$TransferOutputPath,
-    [string]$TransferErrorPath
+    [string]$TransferErrorPath,
+
+    # --- Operator-side authentication (see LogReplayService/pwsh/lrs-operator-auth.ps1) ---
+    [ValidateSet('ExistingContext','Interactive','EntraUser','ServicePrincipal','UserAssignedManagedIdentity','SystemAssignedManagedIdentity')]
+    [string]$OperatorAuthMode = 'ExistingContext',
+    [string]$OperatorTenantId,
+    [string]$OperatorSubscriptionId,
+    [string]$OperatorAccountUpn,
+    [string]$OperatorApplicationId,
+    [securestring]$OperatorClientSecret,
+    [string]$OperatorCertificateThumbprint,
+    [switch]$AutoGrantOperatorRoles,
+    [string[]]$OperatorRequiredRoles,
+    [switch]$SkipTokenSizeCheck
 )
 
 Set-StrictMode -Version Latest
@@ -1797,6 +1810,8 @@ $transferScript = Join-Path -Path $pwshDir -ChildPath 'lrs-backup-transfer.ps1'
 $lrsStartWorkerScript = Join-Path -Path $pwshDir -ChildPath 'lrs-online-start-worker.ps1'
 $reportHelper = Join-Path -Path $pwshDir -ChildPath 'migration-report.ps1'
 . $reportHelper
+$operatorAuthHelper = Join-Path -Path $pwshDir -ChildPath 'lrs-operator-auth.ps1'
+. $operatorAuthHelper
 
 $runId = [guid]::NewGuid().ToString()
 $reportStamp = Get-Date -Format 'yyyyMMdd-HHmmss'
@@ -1898,10 +1913,50 @@ try {
     }
     Update-MigrationReportArtifacts -DatabaseNameList @()
 
+    # Resolve effective operator tenant/sub (explicit operator params win, else legacy TenantId/SubscriptionId).
+    $effectiveOperatorTenant = if ($OperatorTenantId) { $OperatorTenantId } else { $TenantId }
+    $effectiveOperatorSub    = if ($OperatorSubscriptionId) { $OperatorSubscriptionId } else { $SubscriptionId }
+
+    # Build required-role set for the operator identity based on run parameters.
+    $operatorRoleRequirements = @()
+    if ($effectiveOperatorSub -and $ResourceGroupName) {
+        $operatorRoleRequirements = Get-OperatorRoleRequirementSet `
+            -SubscriptionId $effectiveOperatorSub `
+            -ResourceGroupName $ResourceGroupName `
+            -StorageAccountName $StorageAccountName `
+            -StorageAuthMode $StorageAuthMode `
+            -Override $OperatorRequiredRoles
+    }
+
+    $operatorAuth = Initialize-OperatorAuthContext `
+        -Mode $OperatorAuthMode `
+        -TenantId $effectiveOperatorTenant `
+        -SubscriptionId $effectiveOperatorSub `
+        -AccountUpn $OperatorAccountUpn `
+        -ApplicationId $OperatorApplicationId `
+        -ClientSecret $OperatorClientSecret `
+        -CertificateThumbprint $OperatorCertificateThumbprint `
+        -RequiredRoleAssignments $operatorRoleRequirements `
+        -AutoGrantRoles:$AutoGrantOperatorRoles `
+        -SkipTokenSizeCheck:$SkipTokenSizeCheck `
+        -EventLogPath $wrapperEventLogPath `
+        -RunId $runId `
+        -EventSource $eventSourceScriptName `
+        -EventMode 'Online' `
+        -ReportDir $reportDir
+
+    # Prefer operator-resolved tenant/subscription downstream.
+    if ($operatorAuth.TenantId)       { $TenantId       = $operatorAuth.TenantId }
+    if ($operatorAuth.SubscriptionId) { $SubscriptionId = $operatorAuth.SubscriptionId }
+
     $resolvedAzureContext = Set-AzureExecutionContext -Tenant $TenantId -Subscription $SubscriptionId -AllowAutoReauthenticate $AutoReauthenticate
     $TenantId = $resolvedAzureContext.TenantId
     $SubscriptionId = $resolvedAzureContext.SubscriptionId
-    Assert-AzureControlPlaneMfaReady -Tenant $TenantId -Subscription $SubscriptionId -AllowAutoReauthenticate $AutoReauthenticate -OperationLabel 'Online LRS start'
+    if ($OperatorAuthMode -in @('ExistingContext','Interactive','EntraUser')) {
+        Assert-AzureControlPlaneMfaReady -Tenant $TenantId -Subscription $SubscriptionId -AllowAutoReauthenticate $AutoReauthenticate -OperationLabel 'Online LRS start'
+    } else {
+        Write-Host ("MFA preflight skipped (OperatorAuthMode '{0}' is a non-interactive principal)." -f $OperatorAuthMode)
+    }
 
     $instanceFolders = Get-InstanceFolders -RootPath $BackupRootPath
     $instanceFolders = Select-InstanceFolders -InstanceFolderList $instanceFolders -RequestedNames $SelectedInstanceNames

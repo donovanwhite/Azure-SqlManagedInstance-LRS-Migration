@@ -308,6 +308,84 @@ Operator notes:
 - The wrapper starts the background uploader, starts or reuses online LRS restore state, prints status snapshots, and waits for operator actions such as start monitoring, cutover, or quit.
 - Database names in online mode do not need instance-qualified syntax because exactly one source instance is allowed per run.
 
+## Parameter reference
+
+Both wrappers (`wrapper-execution-multi-offline.ps1` and `wrapper-execution-multi-online.ps1`) share a common set of core, storage, and operator-auth parameters. The online wrapper adds a few parameters specific to its long-running transfer-and-cutover workflow.
+
+### Core parameters (both wrappers)
+
+| Parameter | Type | Default | Purpose |
+|---|---|---|---|
+| `-TenantId` | string | (auto) | Azure AD tenant used for Azure CLI and Az PowerShell context. Auto-detected from current context if omitted. |
+| `-SubscriptionId` | string | (auto) | Azure subscription used for the MI. Auto-detected from current context if omitted. |
+| `-AutoReauthenticate` | bool | `$true` | When set, interactively re-authenticates on claims-challenge or MFA-required responses. |
+| `-IncludeDiffs` | switch | off | Include differential backup files in the transfer set (off by default). |
+| `-ResourceGroupName` | string | `rg_sql_dev_zan` | Resource group containing the target Managed Instance. |
+| `-ManagedInstanceName` | string | `dev-sql-mi-001` | Target Managed Instance name. |
+| `-StorageAccountName` | string | `adlssqlbackups` | Storage account that holds backup containers (one container per source instance folder). |
+| `-BackupRootPath` | string | `C:\SqlBackups` | Local root holding `<InstanceFolder>\<DatabaseFolder>\*.bak\|.trn` files. |
+| `-SelectedInstanceNames` | string[] | (all) | Restrict to named source instance folders. Offline only; online requires exactly one instance. |
+| `-SelectedDatabaseNames` | string[] | (all) | Restrict to named databases. Offline supports `Instance\Database` qualification; online does not. |
+
+### Storage auth parameters (both wrappers)
+
+| Parameter | Values | Default | Purpose |
+|---|---|---|---|
+| `-StorageAuthMode` | `EntraAzCli`, `EntraDevice`, `Sas` | `EntraAzCli` | How AzCopy authenticates to the storage container during the transfer phase. |
+| `-StorageContainerSasToken` | string | (none) | Required when `-StorageAuthMode Sas`. Used for both the transfer leg and the LRS `StorageContainerIdentity=SharedAccessSignature` call when set. Also the recommended workaround for the SQL engine `InternalServerError`-on-completeRestore defect under MI auth (see below). |
+
+### Operator authentication parameters (both wrappers)
+
+The operator identity is the principal that the **wrapper itself** runs under when it calls ARM (Azure Resource Manager). It is separate from the SQL Managed Instance's own system-assigned managed identity, which governs how the MI itself reads backup blobs.
+
+Choosing a low-claim operator identity (for example a User-Assigned Managed Identity attached to an Azure VM) reduces the size of the ARM access token and mitigates a SQL engine defect where `completeRestore` can fail with `InternalServerError` when the caller's AAD token exceeds an internal buffer size. A fix is pending in an upcoming SQL Server cumulative update.
+
+| Parameter | Values / Type | Default | Purpose |
+|---|---|---|---|
+| `-OperatorAuthMode` | `ExistingContext`, `Interactive`, `EntraUser`, `ServicePrincipal`, `UserAssignedManagedIdentity`, `SystemAssignedManagedIdentity` | `ExistingContext` | How the wrapper authenticates to ARM. `ExistingContext` reuses whatever `Get-AzContext` already returns (no behaviour change from earlier versions). |
+| `-OperatorTenantId` | string | (auto) | Operator-specific tenant override; falls back to `-TenantId`. |
+| `-OperatorSubscriptionId` | string | (auto) | Operator-specific subscription override; falls back to `-SubscriptionId`. |
+| `-OperatorAccountUpn` | string | (none) | User principal name for `EntraUser` mode. Optional; Interactive works without it. |
+| `-OperatorApplicationId` | string | (none) | Service principal app ID (for `ServicePrincipal`), or UAMI client ID (for `UserAssignedManagedIdentity`). |
+| `-OperatorClientSecret` | SecureString | (none) | Service principal client secret. Mutually exclusive with `-OperatorCertificateThumbprint`. |
+| `-OperatorCertificateThumbprint` | string | (none) | Service principal certificate thumbprint. Mutually exclusive with `-OperatorClientSecret`. |
+| `-AutoGrantOperatorRoles` | switch | off | When set, the wrapper will attempt to create missing role assignments for the operator identity (requires the caller to hold `Role Based Access Control Administrator`, `User Access Administrator`, or `Owner` at the target scope). When off, the wrapper fails fast with an explanatory error listing any missing roles. |
+| `-OperatorRequiredRoles` | string[] | (built-in) | Override the default required-role set. Defaults are `SQL Managed Instance Contributor` at the resource group scope, plus `Storage Blob Data Reader` at the storage account scope when not using SAS. |
+| `-SkipTokenSizeCheck` | switch | off | Skip the JWT size diagnostic. Not recommended; the diagnostic is a key signal for the `InternalServerError` defect. |
+
+When the operator identity is missing a required role and `-AutoGrantOperatorRoles` is not set, the wrapper stops before the LRS phase with a message of the form:
+
+```text
+Operator RBAC preflight failed. The current operator identity is missing the following role assignments:
+    - SQL Managed Instance Contributor @ /subscriptions/.../resourceGroups/rg_sql_dev_zan  (Required to start, monitor, and complete LRS on the Managed Instance.)
+```
+
+When `-AutoGrantOperatorRoles` is set, every grant is recorded in the run's report folder as `auth-grants-applied.json` so it can be audited or reverted later.
+
+### Online-only parameters
+
+| Parameter | Type | Default | Purpose |
+|---|---|---|---|
+| `-TransferPollSeconds` | int | `300` | Interval in seconds between backup-folder scans by the uploader. Lower values for small/frequent logs; higher for quieter estates. |
+| `-StatusIntervalMinutes` | int | `15` | Minutes between status snapshots printed to the console. |
+| `-InitialUploadTimeoutMinutes` | int | `30` | Maximum wait for the first FULL backup to complete uploading before the wrapper aborts. |
+| `-CutoverCandidateCount` | int | `3` | Number of candidate log files shown in the cutover selector. |
+| `-ScheduledCutoverLocalTime` | datetime | (none) | Local-time timestamp at which the wrapper triggers cutover automatically. Past times are rejected up-front. |
+| `-TransferStatePath` | string | (auto) | Override the on-disk state file used by the uploader. |
+| `-TransferOutputPath` | string | (auto) | Override stdout capture path for the background uploader process. |
+| `-TransferErrorPath` | string | (auto) | Override stderr capture path for the background uploader process. |
+
+### Operator auth mode quick-reference
+
+| Mode | When to use | Token size (typical) | Requires |
+|---|---|---|---|
+| `ExistingContext` | You already ran `Connect-AzAccount` in this session and want the wrapper to reuse it. | Whatever your existing context produced | An existing Az context |
+| `Interactive` | Laptop / workstation, one-off runs, browser-capable. | User-scale (can be large with heavy group membership) | Browser or device flow |
+| `EntraUser` | Non-default user, still interactive, UPN known. | User-scale | Browser or device flow |
+| `ServicePrincipal` | CI/CD and unattended runs from any host. | Small (SPN tokens have no user group claims) | App registration with secret or cert |
+| `UserAssignedManagedIdentity` | Recommended for Azure VM / Arc / container hosts. Smallest, most stable, secret-free. | Small | UAMI attached to the host and its client ID |
+| `SystemAssignedManagedIdentity` | Quick one-off from an Azure VM that already has SAMI. | Small | SAMI enabled on the host |
+
 ## License
 
 This project is released under the [MIT License](LICENSE) and is free to use, modify, and distribute.
