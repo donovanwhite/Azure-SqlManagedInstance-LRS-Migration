@@ -307,3 +307,9 @@ Operator notes:
 - The wrapper may prompt for an AzCopy device login because the uploader runs in a separate long-lived background process.
 - The wrapper starts the background uploader, starts or reuses online LRS restore state, prints status snapshots, and waits for operator actions such as start monitoring, cutover, or quit.
 - Database names in online mode do not need instance-qualified syntax because exactly one source instance is allowed per run.
+
+## License
+
+This project is released under the [MIT License](LICENSE) and is free to use, modify, and distribute.
+
+**Use at your own risk.** The software is provided "AS IS", without warranty of any kind, express or implied. The authors and copyright holders accept no liability for any data loss, downtime, migration failure, or other damages arising from use of these scripts. Always validate against non-production environments before running against production Azure SQL Managed Instance workloads, and ensure you have verified backups before initiating any cutover.
