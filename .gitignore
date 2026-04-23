@@ -23,3 +23,7 @@
 # Keep static artifacts local only
 **/static/
 **/Static/
+
+# Local demo folders (do not upload)
+**/demo/
+**/Demo/

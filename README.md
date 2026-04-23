@@ -160,6 +160,27 @@ Notes:
 - `LOG` is used for transaction log discovery; common equivalents are also recognized.
 - Backups are copied into a flat destination folder per database because LRS does not allow nested `FULL` or `LOG` subfolders in storage.
 - Container and folder names must not contain the word `backup`.
+- UNC paths are supported for `-BackupRootPath` (for example `\\fileserver\share\LRSBackup`). The account running the wrapper must already have read access to the share.
+
+### Striped backup support
+
+The transfer script detects multi-file (striped) FULL and DIFF backups automatically and uploads every stripe in the chosen set. Stripe detection is filename-based and evaluated in this order:
+
+| Pattern              | Example                                              | Notes                                              |
+|----------------------|------------------------------------------------------|----------------------------------------------------|
+| `NofM`               | `SalesDb_FULL_20260415_1of3.bak`                     | Strongest signal; total stripe count is captured.  |
+| `stripeN`            | `SalesDb_FULL_20260415_stripe1.bak`                  | Explicit `stripe` keyword.                         |
+| `partN`              | `SalesDb_FULL_20260415_part1.bak`                    | Explicit `part` keyword.                           |
+| `fileN`              | `SalesDb_FULL_20260415_file1.bak`                    | Explicit `file` keyword.                           |
+| `TimestampedStripe`  | `SalesDb_20260415_120000_1.bak`                      | Stem must contain an 8-digit date and optional 4-6 digit time before the trailing index. High confidence. |
+| `TrailingNumeric`    | `SalesDb_1.bak`, `SalesDb_2.bak`, `SalesDb_3.bak`    | Loose fallback. Only honoured when **two or more** sibling files share the same stem; a lone `SalesDb_5.bak` is treated as a single-file backup. |
+
+Additional safeguards:
+
+- Files that share a stem but were written more than 120 minutes apart are split into separate sets, so unrelated backups taken on different days are never merged.
+- LOG (`.trn`) backups have always been uploaded as a list, so striped log backups continue to work.
+- LRS on Managed Instance requires every stripe of a backup set to be present in the destination container — the wrapper now ensures this.
+- If your stripe naming convention does not match any of the above, restripe to a single file (`BACKUP DATABASE ... TO DISK = '...full.bak' WITH COPY_ONLY, COMPRESSION;`) before transfer, or open an issue/PR to add the pattern.
 
 ## Default storage layout
 

@@ -1094,6 +1094,188 @@ function Get-ApplicableDiffBackupFile {
     return ($applicableDiffs | Sort-Object -Property Name | Select-Object -Last 1)
 }
 
+function Get-BackupStripePattern {
+    param([string]$BaseName)
+
+    if (-not $BaseName) { return $null }
+
+    # Patterns are evaluated top-to-bottom; the first match wins.
+    # Stronger / more specific patterns (NofM, explicit stripe/part/file keywords,
+    # and timestamp-anchored numerics) come first. The loose 'TrailingNumeric'
+    # pattern is intentionally last and is only honoured later when sibling
+    # confirmation is found in Get-BackupStripeSetGroups.
+    $patterns = @(
+        @{ Name = 'NofM';               Regex = '^(?<stem>.+?)[._-](?<idx>\d{1,3})of(?<tot>\d{1,3})$' },
+        @{ Name = 'StripeN';            Regex = '^(?<stem>.+?)[._-]stripe(?<idx>\d{1,3})$' },
+        @{ Name = 'PartN';              Regex = '^(?<stem>.+?)[._-]part(?<idx>\d{1,3})$' },
+        @{ Name = 'FileN';              Regex = '^(?<stem>.+?)[._-]file(?<idx>\d{1,3})$' },
+        # Timestamped: requires an 8-digit date (YYYYMMDD) and optional 4-6 digit
+        # time component anywhere in the stem before the trailing stripe index.
+        # Examples that match:
+        #   AG2_20260422_120000_1.bak  -> stem='AG2_20260422_120000', idx=1
+        #   AG2-20260422-1.bak         -> stem='AG2-20260422',        idx=1
+        #   AG2_full_20260422T1200_03.bak (T-form) handled by allowing letters in stem
+        @{ Name = 'TimestampedStripe'; Regex = '^(?<stem>.+?[._-]\d{8}(?:[._T-]\d{4,6})?)[._-](?<idx>\d{1,3})$' },
+        @{ Name = 'TrailingNumeric';    Regex = '^(?<stem>.+?)[._-](?<idx>\d{1,3})$' }
+    )
+
+    foreach ($pattern in $patterns) {
+        if ($BaseName -imatch $pattern.Regex) {
+            $totalValue = $null
+            if ($Matches.ContainsKey('tot')) { $totalValue = [int]$Matches['tot'] }
+            return [pscustomobject]@{
+                Stem    = [string]$Matches['stem']
+                Index   = [int]$Matches['idx']
+                Total   = $totalValue
+                Pattern = $pattern.Name
+            }
+        }
+    }
+
+    return $null
+}
+
+function Get-BackupStripeSetGroups {
+    param(
+        [object[]]$Files,
+        [int]$WindowMinutes = 120
+    )
+
+    if (-not $Files -or $Files.Count -eq 0) { return @() }
+
+    $tagged = foreach ($file in $Files) {
+        $base = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
+        $stripeInfo = Get-BackupStripePattern -BaseName $base
+        # Loose 'TrailingNumeric' matches must only count as stripes when there
+        # are sibling files sharing the same stem; otherwise treat as a
+        # single-file backup so that names like 'MyDb_5.bak' (a one-off backup
+        # with a numeric suffix) are not mis-grouped or wrongly assumed to be
+        # part of an incomplete stripe set.
+        $stem = if ($stripeInfo) { $stripeInfo.Stem } else { $base }
+        $stemKey = ($stem.ToLowerInvariant() + '|' + $file.Extension.ToLowerInvariant())
+        [pscustomobject]@{
+            File       = $file
+            StemKey    = $stemKey
+            StripeInfo = $stripeInfo
+            BaseName   = $base
+        }
+    }
+
+    $groups = @()
+    foreach ($groupEntry in ($tagged | Group-Object -Property StemKey)) {
+        $items = @($groupEntry.Group)
+
+        # Defensive: if a group of size 1 was matched only by the loose
+        # TrailingNumeric pattern, re-key it under its full base name so we
+        # do not accidentally combine it with future siblings later.
+        if ($items.Count -eq 1 -and $items[0].StripeInfo -and $items[0].StripeInfo.Pattern -eq 'TrailingNumeric') {
+            $entry = $items[0]
+            $groups += [pscustomobject]@{
+                Stem       = ($entry.BaseName.ToLowerInvariant() + '|' + $entry.File.Extension.ToLowerInvariant())
+                Files      = @($entry.File)
+                LatestTime = $entry.File.LastWriteTime
+            }
+            continue
+        }
+
+        $times = @($items | ForEach-Object { $_.File.LastWriteTime })
+        $minTime = ($times | Measure-Object -Minimum).Minimum
+        $maxTime = ($times | Measure-Object -Maximum).Maximum
+
+        if ($items.Count -gt 1 -and (($maxTime - $minTime).TotalMinutes -gt $WindowMinutes)) {
+            foreach ($entry in $items) {
+                $groups += [pscustomobject]@{
+                    Stem       = ($entry.BaseName.ToLowerInvariant() + '|' + $entry.File.Extension.ToLowerInvariant())
+                    Files      = @($entry.File)
+                    LatestTime = $entry.File.LastWriteTime
+                }
+            }
+            continue
+        }
+
+        $orderedFiles = @($items | Sort-Object -Property @{ Expression = { if ($_.StripeInfo) { $_.StripeInfo.Index } else { 0 } } }, @{ Expression = { $_.File.Name } } | ForEach-Object { $_.File })
+        $groups += [pscustomobject]@{
+            Stem       = $groupEntry.Name
+            Files      = @($orderedFiles)
+            LatestTime = $maxTime
+        }
+    }
+
+    return ,@($groups)
+}
+
+function Get-SelectedBackupFileSet {
+    param(
+        [string]$Root,
+        [string[]]$Extensions,
+        [string]$ExplicitFileName,
+        [ValidateSet('Earliest', 'Latest')]
+        [string]$Selection,
+        [string]$Label
+    )
+
+    $allFiles = Get-BackupFiles -Root $Root -Extensions $Extensions -Since $null -StartFileName $null
+    if (-not $allFiles -or $allFiles.Count -eq 0) {
+        throw "No $Label files were found in $Root."
+    }
+
+    $groups = Get-BackupStripeSetGroups -Files $allFiles
+    if (-not $groups -or $groups.Count -eq 0) {
+        throw "No $Label files were found in $Root."
+    }
+
+    if ($ExplicitFileName) {
+        $explicitPath = Join-Path -Path $Root -ChildPath $ExplicitFileName
+        if (-not (Test-Path -LiteralPath $explicitPath)) {
+            throw "$Label file '$explicitPath' not found."
+        }
+
+        $explicitItem = Get-Item -LiteralPath $explicitPath
+        $matchedGroup = $groups | Where-Object { @($_.Files | Where-Object { $_.FullName -ieq $explicitItem.FullName }).Count -gt 0 } | Select-Object -First 1
+        if ($matchedGroup) {
+            return $matchedGroup.Files
+        }
+
+        return $explicitItem
+    }
+
+    $sortedGroups = $groups | Sort-Object -Property LatestTime, Stem
+    $picked = if ($Selection -eq 'Earliest') { $sortedGroups | Select-Object -First 1 } else { $sortedGroups | Select-Object -Last 1 }
+    return $picked.Files
+}
+
+function Get-ApplicableDiffBackupFileSet {
+    param(
+        [string]$DiffPath,
+        [datetime]$FullBackupTime
+    )
+
+    if (-not $DiffPath -or -not (Test-Path -LiteralPath $DiffPath)) {
+        return @()
+    }
+
+    $diffFiles = Get-BackupFiles -Root $DiffPath -Extensions @('.diff', '.dif', '.bak') -Since $null -StartFileName $null
+    if (-not $diffFiles -or $diffFiles.Count -eq 0) {
+        return @()
+    }
+
+    $groups = Get-BackupStripeSetGroups -Files $diffFiles
+    if (-not $groups -or $groups.Count -eq 0) {
+        return @()
+    }
+
+    if ($FullBackupTime) {
+        $groups = @($groups | Where-Object { $_.LatestTime -ge $FullBackupTime })
+    }
+
+    if (-not $groups -or $groups.Count -eq 0) {
+        return @()
+    }
+
+    $picked = $groups | Sort-Object -Property LatestTime, Stem | Select-Object -Last 1
+    return $picked.Files
+}
+
 function Resolve-PathTemplate {
     param(
         [string]$Value,
@@ -1333,17 +1515,25 @@ if ($Mode -eq 'Offline') {
         Write-Log "Preparing offline transfer for database '$dbName'."
         Write-Log "Offline copy from $sourceRoot to $storageBase"
 
-        $fullFileInfo = Get-SelectedBackupFile -Root $resolvedFullPath -Extensions @('.bak') -ExplicitFileName $resolvedFullFile -Selection 'Latest' -Label 'Full backup'
-        $fullFilePath = $fullFileInfo.FullName
+        $fullFileSet = @(Get-SelectedBackupFileSet -Root $resolvedFullPath -Extensions @('.bak') -ExplicitFileName $resolvedFullFile -Selection 'Latest' -Label 'Full backup')
+        $fullFileInfo = $fullFileSet | Sort-Object -Property LastWriteTime | Select-Object -Last 1
         $logAnchorTime = $fullFileInfo.LastWriteTime
+        $selectedDiffFiles = @()
         $selectedDiffFile = $null
 
-        Invoke-AzCopyFile -SourceFile $fullFilePath -TargetUri $targetUri
+        if ($fullFileSet.Count -gt 1) {
+            Write-Log "Detected striped FULL backup for '$dbName' with $($fullFileSet.Count) stripe(s): $((($fullFileSet | ForEach-Object { $_.Name }) -join ', '))"
+        }
+        Invoke-AzCopyFiles -Files $fullFileSet -TargetUri $targetUri -Description "Transfer full backup for database '$dbName'"
 
         if ($IncludeDiffs -and $resolvedDiffPath) {
-            $selectedDiffFile = Get-ApplicableDiffBackupFile -DiffPath $resolvedDiffPath -FullBackupTime $fullFileInfo.LastWriteTime
-            if ($selectedDiffFile) {
-                Invoke-AzCopyFile -SourceFile $selectedDiffFile.FullName -TargetUri $targetUri
+            $selectedDiffFiles = @(Get-ApplicableDiffBackupFileSet -DiffPath $resolvedDiffPath -FullBackupTime $fullFileInfo.LastWriteTime)
+            if ($selectedDiffFiles.Count -gt 0) {
+                $selectedDiffFile = $selectedDiffFiles | Sort-Object -Property LastWriteTime | Select-Object -Last 1
+                if ($selectedDiffFiles.Count -gt 1) {
+                    Write-Log "Detected striped DIFF backup for '$dbName' with $($selectedDiffFiles.Count) stripe(s): $((($selectedDiffFiles | ForEach-Object { $_.Name }) -join ', '))"
+                }
+                Invoke-AzCopyFiles -Files $selectedDiffFiles -TargetUri $targetUri -Description "Transfer diff backup for database '$dbName'"
                 $logAnchorTime = $selectedDiffFile.LastWriteTime
             } else {
                 Write-Log "No applicable diff backup found for $dbName after full backup $($fullFileInfo.Name)."
@@ -1355,7 +1545,11 @@ if ($Mode -eq 'Offline') {
         $logFiles = Get-BackupFiles -Root $resolvedTranPath -Extensions @('.trn') -Since $null -StartFileName $resolvedTranStart
         Write-TransferMigrationEvent -Mode $Mode -Level 'Info' -Phase 'Transfer' -Action 'OfflineCopyPlanned' -InstanceName $workItem.InstanceName -DatabaseName $dbName -Message 'Prepared offline backup copy set.' -Data @{
             fullBackup = $fullFileInfo.Name
+            fullBackupStripes = $fullFileSet.Count
+            fullBackupFiles = @($fullFileSet | ForEach-Object { $_.Name })
             diffBackup = if ($selectedDiffFile) { $selectedDiffFile.Name } else { $null }
+            diffBackupStripes = $selectedDiffFiles.Count
+            diffBackupFiles = @($selectedDiffFiles | ForEach-Object { $_.Name })
             firstLog = if ($logFiles.Count -gt 0) { $logFiles[0].Name } else { $null }
             lastLog = if ($logFiles.Count -gt 0) { $logFiles[$logFiles.Count - 1].Name } else { $null }
             logCount = $logFiles.Count
@@ -1420,17 +1614,25 @@ foreach ($workItem in $workItems) {
     Write-Log "Preparing initial online transfer for database '$dbName'."
     Write-Log "Initial copy from $sourceRoot to $storageBase"
 
-    $fullFileInfo = Get-SelectedBackupFile -Root $resolvedFullPath -Extensions @('.bak') -ExplicitFileName $resolvedFullFile -Selection 'Latest' -Label 'Full backup'
-    $fullFilePath = $fullFileInfo.FullName
+    $fullFileSet = @(Get-SelectedBackupFileSet -Root $resolvedFullPath -Extensions @('.bak') -ExplicitFileName $resolvedFullFile -Selection 'Latest' -Label 'Full backup')
+    $fullFileInfo = $fullFileSet | Sort-Object -Property LastWriteTime | Select-Object -Last 1
     $logAnchorTime = $fullFileInfo.LastWriteTime
+    $selectedDiffFiles = @()
     $selectedDiffFile = $null
 
-    Invoke-AzCopyFile -SourceFile $fullFilePath -TargetUri $targetUri
+    if ($fullFileSet.Count -gt 1) {
+        Write-Log "Detected striped FULL backup for '$dbName' with $($fullFileSet.Count) stripe(s): $((($fullFileSet | ForEach-Object { $_.Name }) -join ', '))"
+    }
+    Invoke-AzCopyFiles -Files $fullFileSet -TargetUri $targetUri -Description "Transfer full backup for database '$dbName'"
 
     if ($IncludeDiffs -and $resolvedDiffPath) {
-        $selectedDiffFile = Get-ApplicableDiffBackupFile -DiffPath $resolvedDiffPath -FullBackupTime $fullFileInfo.LastWriteTime
-        if ($selectedDiffFile) {
-            Invoke-AzCopyFile -SourceFile $selectedDiffFile.FullName -TargetUri $targetUri
+        $selectedDiffFiles = @(Get-ApplicableDiffBackupFileSet -DiffPath $resolvedDiffPath -FullBackupTime $fullFileInfo.LastWriteTime)
+        if ($selectedDiffFiles.Count -gt 0) {
+            $selectedDiffFile = $selectedDiffFiles | Sort-Object -Property LastWriteTime | Select-Object -Last 1
+            if ($selectedDiffFiles.Count -gt 1) {
+                Write-Log "Detected striped DIFF backup for '$dbName' with $($selectedDiffFiles.Count) stripe(s): $((($selectedDiffFiles | ForEach-Object { $_.Name }) -join ', '))"
+            }
+            Invoke-AzCopyFiles -Files $selectedDiffFiles -TargetUri $targetUri -Description "Transfer diff backup for database '$dbName'"
             $logAnchorTime = $selectedDiffFile.LastWriteTime
         } else {
             Write-Log "No applicable diff backup found for $dbName after full backup $($fullFileInfo.Name)."
@@ -1442,7 +1644,11 @@ foreach ($workItem in $workItems) {
     $logFiles = Get-BackupFiles -Root $resolvedTranPath -Extensions @('.trn') -Since $null -StartFileName $resolvedTranStart
     Write-TransferMigrationEvent -Mode $Mode -Level 'Info' -Phase 'Transfer' -Action 'InitialOnlineCopyPlanned' -InstanceName $workItem.InstanceName -DatabaseName $dbName -Message 'Prepared initial online backup copy set.' -Data @{
         fullBackup = $fullFileInfo.Name
+        fullBackupStripes = $fullFileSet.Count
+        fullBackupFiles = @($fullFileSet | ForEach-Object { $_.Name })
         diffBackup = if ($selectedDiffFile) { $selectedDiffFile.Name } else { $null }
+        diffBackupStripes = $selectedDiffFiles.Count
+        diffBackupFiles = @($selectedDiffFiles | ForEach-Object { $_.Name })
         firstLog = if ($logFiles.Count -gt 0) { $logFiles[0].Name } else { $null }
         lastLog = if ($logFiles.Count -gt 0) { $logFiles[$logFiles.Count - 1].Name } else { $null }
         logCount = $logFiles.Count

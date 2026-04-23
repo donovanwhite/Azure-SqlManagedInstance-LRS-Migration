@@ -516,6 +516,10 @@ function Resolve-RequestedCutoverScheduleUtc {
     }
 
     $resolvedLocalTime = [datetime]$RequestedCutoverLocalTime
+    if ($resolvedLocalTime -le (Get-Date)) {
+        throw "ScheduledCutoverLocalTime '$($resolvedLocalTime.ToString('yyyy-MM-dd HH:mm:ss'))' is in the past. Cutover would execute immediately on the next monitor poll using only the backups already transferred, causing silent data loss for any source activity after the last uploaded log. Provide a future local date/time, or omit -ScheduledCutoverLocalTime to schedule interactively."
+    }
+
     return $resolvedLocalTime.ToUniversalTime()
 }
 
@@ -628,7 +632,17 @@ function Test-CriticalOnlineCutoverFailure {
         'Index was outside the bounds of the array',
         'Object reference not set to an instance of an object',
         'Method invocation failed because',
-        'You cannot call a method on a null-valued expression'
+        'You cannot call a method on a null-valued expression',
+        # ARM-side failures during cutover/complete that are unsafe to retry automatically.
+        # InternalServerError on completeRestore can leave the restoring DB dropped; a follow-up
+        # retry then hits ResourceNotFound and masks the real problem. Stop and surface to operator.
+        '\(InternalServerError\)',
+        'Code:\s*InternalServerError',
+        '\(ResourceNotFound\)',
+        'Code:\s*ResourceNotFound',
+        'ARMResourceNotFoundFix',
+        '\(ParentResourceNotFound\)',
+        'Code:\s*ParentResourceNotFound'
     )
 
     foreach ($pattern in $criticalPatterns) {
@@ -2077,7 +2091,7 @@ try {
                     } catch {
                         if (Test-CriticalOnlineCutoverFailure -Message $_.Exception.Message) {
                             Stop-OnlineProcessesForCriticalFailure -TransferProcess $transferProcess -FailurePhase 'Cutover' -FailureMessage $_.Exception.Message
-                            throw "Critical scheduled cutover failure. $($_.Exception.Message)"
+                            throw "Critical scheduled cutover failure - automatic retry suppressed because the failure may have left the restoring database in an inconsistent state (for example InternalServerError on completeRestore can drop the placeholder DB, causing follow-up calls to return ResourceNotFound). Investigate the activity log, then re-run online LRS from a fresh FULL backup if needed. Underlying error: $($_.Exception.Message)"
                         }
 
                         $nextScheduledCutoverRetryAt = (Get-Date).AddSeconds([Math]::Max(15, $TransferPollSeconds))
@@ -2120,7 +2134,7 @@ try {
                 } catch {
                     if (Test-CriticalOnlineCutoverFailure -Message $_.Exception.Message) {
                         Stop-OnlineProcessesForCriticalFailure -TransferProcess $transferProcess -FailurePhase 'Cutover' -FailureMessage $_.Exception.Message
-                        throw "Critical manual cutover failure. $($_.Exception.Message)"
+                        throw "Critical manual cutover failure - automatic retry suppressed because the failure may have left the restoring database in an inconsistent state (for example InternalServerError on completeRestore can drop the placeholder DB, causing follow-up calls to return ResourceNotFound). Investigate the activity log, then re-run online LRS from a fresh FULL backup if needed. Underlying error: $($_.Exception.Message)"
                     }
 
                     Write-Warning "Manual cutover attempt failed. $($_.Exception.Message)"
