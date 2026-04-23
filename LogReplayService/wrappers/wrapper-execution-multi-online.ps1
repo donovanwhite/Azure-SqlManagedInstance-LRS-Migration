@@ -910,7 +910,8 @@ function Set-AzureExecutionContext {
     param(
         [string]$Tenant,
         [string]$Subscription,
-        [bool]$AllowAutoReauthenticate = $true
+        [bool]$AllowAutoReauthenticate = $true,
+        [switch]$SkipAzPowerShellConnect
     )
 
     $effectiveTenant = $Tenant
@@ -962,7 +963,11 @@ function Set-AzureExecutionContext {
 
     Import-LatestAzAccountsModule
 
-    if (Get-Command Get-AzContext -ErrorAction SilentlyContinue) {
+    if ($SkipAzPowerShellConnect) {
+        # Operator-auth helper already established the Az PowerShell context for this run.
+        # Skip the legacy re-connect path to avoid a redundant token acquisition.
+    }
+    elseif (Get-Command Get-AzContext -ErrorAction SilentlyContinue) {
         $context = Get-AzContext -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         if (-not $context) {
             try {
@@ -1949,7 +1954,10 @@ try {
     if ($operatorAuth.TenantId)       { $TenantId       = $operatorAuth.TenantId }
     if ($operatorAuth.SubscriptionId) { $SubscriptionId = $operatorAuth.SubscriptionId }
 
-    $resolvedAzureContext = Set-AzureExecutionContext -Tenant $TenantId -Subscription $SubscriptionId -AllowAutoReauthenticate $AutoReauthenticate
+    # When the helper already ran Connect-AzAccount for this session (any non-default mode),
+    # let it own the Az PowerShell context and skip the legacy re-connect path.
+    $skipAzPsConnect = ($OperatorAuthMode -ne 'ExistingContext')
+    $resolvedAzureContext = Set-AzureExecutionContext -Tenant $TenantId -Subscription $SubscriptionId -AllowAutoReauthenticate $AutoReauthenticate -SkipAzPowerShellConnect:$skipAzPsConnect
     $TenantId = $resolvedAzureContext.TenantId
     $SubscriptionId = $resolvedAzureContext.SubscriptionId
     if ($OperatorAuthMode -in @('ExistingContext','Interactive','EntraUser')) {
