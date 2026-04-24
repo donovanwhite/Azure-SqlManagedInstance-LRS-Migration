@@ -288,6 +288,93 @@ function Connect-OperatorAuthIdentity {
     }
 }
 
+function Resolve-OperatorSubscriptionSelection {
+    <#
+    .SYNOPSIS
+        Ensures an Az PowerShell context has a subscription selected, prompting interactively when ambiguous.
+    .DESCRIPTION
+        Multi-subscription tenants (the common case) require an explicit subscription pick;
+        otherwise downstream resource-group / managed-instance lookups fail with confusing
+        "ResourceGroupNotFound" errors against whatever sub Az happened to pick. This helper
+        is called after Connect-OperatorAuthIdentity. If a subscription is already selected
+        in the current context, it is returned as-is. Otherwise Get-AzSubscription is called
+        (scoped to TenantId when provided), and:
+            - 0 results : throws with guidance.
+            - 1 result  : auto-selects and logs.
+            - >1 results: prompts the operator to pick one (by number).
+    #>
+    [CmdletBinding()]
+    param(
+        [string]$TenantId
+    )
+
+    if (-not (Get-Command Get-AzContext -ErrorAction SilentlyContinue)) {
+        return $null
+    }
+
+    $context = Get-AzContext -ErrorAction SilentlyContinue
+    if ($context -and $context.Subscription -and $context.Subscription.Id) {
+        return [string]$context.Subscription.Id
+    }
+
+    if (-not (Get-Command Get-AzSubscription -ErrorAction SilentlyContinue)) {
+        throw "No subscription is selected on the current Az PowerShell context and Get-AzSubscription is unavailable. Re-run with -SubscriptionId (or -OperatorSubscriptionId) explicitly set."
+    }
+
+    $listArgs = @{ ErrorAction = 'Stop' }
+    if ($TenantId) { $listArgs['TenantId'] = $TenantId }
+
+    try {
+        $subs = @(Get-AzSubscription @listArgs)
+    } catch {
+        throw "Failed to enumerate subscriptions for the operator identity. Underlying error: $($_.Exception.Message). Re-run with -SubscriptionId explicitly set to bypass enumeration."
+    }
+
+    $subs = @($subs | Where-Object { $_ -and $_.State -eq 'Enabled' })
+    if ($subs.Count -eq 0) {
+        throw "No enabled subscriptions are visible to the operator identity$([string](if ($TenantId) { " in tenant $TenantId" } else { '' })). Re-run with -SubscriptionId explicitly set, or grant the operator identity access to at least one subscription."
+    }
+
+    if ($subs.Count -eq 1) {
+        $only = $subs[0]
+        Write-Host ("Subscription auto-selected (only one visible): {0} ({1})" -f $only.Name, $only.Id) -ForegroundColor Cyan
+        Set-AzContext -Subscription $only.Id -Tenant $only.TenantId -ErrorAction Stop | Out-Null
+        return [string]$only.Id
+    }
+
+    Write-Host ''
+    Write-Host '--- Subscription selection required ---' -ForegroundColor Yellow
+    Write-Host 'No subscription was supplied and the operator identity can see more than one. Pick one to scope this run:' -ForegroundColor Yellow
+    for ($i = 0; $i -lt $subs.Count; $i++) {
+        Write-Host ("  [{0}] {1}  ({2})  tenant={3}" -f ($i + 1), $subs[$i].Name, $subs[$i].Id, $subs[$i].TenantId)
+    }
+
+    $selected = $null
+    while (-not $selected) {
+        $answer = Read-Host ("Enter selection 1-{0} (or full subscription ID)" -f $subs.Count)
+        if ([string]::IsNullOrWhiteSpace($answer)) { continue }
+
+        $trimmed = $answer.Trim()
+        $asInt = 0
+        if ([int]::TryParse($trimmed, [ref]$asInt) -and $asInt -ge 1 -and $asInt -le $subs.Count) {
+            $selected = $subs[$asInt - 1]
+            break
+        }
+
+        $match = $subs | Where-Object { $_.Id -eq $trimmed } | Select-Object -First 1
+        if ($match) {
+            $selected = $match
+            break
+        }
+
+        Write-Host "Invalid selection. Enter a number from the list or paste a full subscription ID." -ForegroundColor Red
+    }
+
+    Write-Host ("Subscription selected: {0} ({1})" -f $selected.Name, $selected.Id) -ForegroundColor Cyan
+    Set-AzContext -Subscription $selected.Id -Tenant $selected.TenantId -ErrorAction Stop | Out-Null
+    return [string]$selected.Id
+}
+
 function Test-OperatorRoleAssignments {
     [CmdletBinding()]
     param(
@@ -426,6 +513,12 @@ function Initialize-OperatorAuthContext {
         -ApplicationId $ApplicationId `
         -ClientSecret $ClientSecret `
         -CertificateThumbprint $CertificateThumbprint
+
+    # Multi-subscription tenants are the norm. If the caller did not pin a subscription,
+    # resolve one now (auto-select when unambiguous, prompt when not) so downstream RG/MI
+    # lookups don't silently target the wrong subscription.
+    $resolvedSubscriptionId = Resolve-OperatorSubscriptionSelection -TenantId $TenantId
+    if ($resolvedSubscriptionId) { $SubscriptionId = $resolvedSubscriptionId }
 
     $context = Get-AzContext -ErrorAction SilentlyContinue
     if ($context) {
