@@ -429,9 +429,14 @@ function Initialize-OperatorAuthContext {
 
     $context = Get-AzContext -ErrorAction SilentlyContinue
     if ($context) {
-        Write-Host ("Account: {0} ({1})" -f $context.Account.Id, $context.Account.Type)
-        Write-Host ("Tenant : {0}" -f $context.Tenant.Id)
-        Write-Host ("Sub    : {0} ({1})" -f $context.Subscription.Id, $context.Subscription.Name)
+        $accountId   = if ($context.Account)      { [string]$context.Account.Id }      else { '<unknown>' }
+        $accountType = if ($context.Account)      { [string]$context.Account.Type }    else { '<unknown>' }
+        $tenantText  = if ($context.Tenant)       { [string]$context.Tenant.Id }       else { '<none>' }
+        $subId       = if ($context.Subscription) { [string]$context.Subscription.Id } else { '<none>' }
+        $subName     = if ($context.Subscription) { [string]$context.Subscription.Name } else { '<none>' }
+        Write-Host ("Account: {0} ({1})" -f $accountId, $accountType)
+        Write-Host ("Tenant : {0}" -f $tenantText)
+        Write-Host ("Sub    : {0} ({1})" -f $subId, $subName)
     }
 
     $diagnostics = $null
@@ -506,15 +511,15 @@ Re-run the wrapper with -AutoGrantOperatorRoles to attempt automatic grant (requ
         }
     }
 
-    $effectiveTenant = if ($context) { [string]$context.Tenant.Id } else { $TenantId }
-    $effectiveSub    = if ($context) { [string]$context.Subscription.Id } else { $SubscriptionId }
+    $effectiveTenant = if ($context -and $context.Tenant)       { [string]$context.Tenant.Id }       else { $TenantId }
+    $effectiveSub    = if ($context -and $context.Subscription) { [string]$context.Subscription.Id } else { $SubscriptionId }
 
     $authState = [pscustomobject][ordered]@{
         Mode               = $Mode
         TenantId           = $effectiveTenant
         SubscriptionId     = $effectiveSub
-        AccountId          = if ($context) { [string]$context.Account.Id } else { $null }
-        AccountType        = if ($context) { [string]$context.Account.Type } else { $null }
+        AccountId          = if ($context -and $context.Account) { [string]$context.Account.Id }   else { $null }
+        AccountType        = if ($context -and $context.Account) { [string]$context.Account.Type } else { $null }
         PrincipalId        = $principalId
         ApplicationId      = $ApplicationId
         TokenDiagnostics   = $diagnostics
