@@ -283,7 +283,7 @@ function Get-TransferShellPath {
     throw 'Unable to locate pwsh or powershell.exe for the background transfer process.'
 }
 
-function Resolve-AzCopyExecutablePath {
+function Find-AzCopyExecutablePath {
     $azCopyCommand = Get-Command azcopy -ErrorAction SilentlyContinue
     if ($azCopyCommand -and $azCopyCommand.Source -and (Test-Path -LiteralPath $azCopyCommand.Source)) {
         return $azCopyCommand.Source
@@ -308,7 +308,50 @@ function Resolve-AzCopyExecutablePath {
         }
     }
 
-    throw 'AzCopy is not available in PATH. Install AzCopy before running the online wrapper.'
+    return $null
+}
+
+function Update-ProcessPathFromEnvironment {
+    $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+    $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
+    $segments = @()
+    if ($machinePath) { $segments += $machinePath }
+    if ($userPath) { $segments += $userPath }
+    if ($segments.Count -gt 0) {
+        $env:Path = $segments -join ';'
+    }
+}
+
+function Install-AzCopyViaWinget {
+    $wingetCommand = Get-Command winget -ErrorAction SilentlyContinue
+    if (-not $wingetCommand) {
+        return $false
+    }
+
+    Write-Host 'AzCopy is not available in PATH. Attempting installation via winget (Microsoft.Azure.AZCopy.10).'
+    & $wingetCommand.Source install --id Microsoft.Azure.AZCopy.10 --exact --accept-source-agreements --accept-package-agreements --disable-interactivity | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+        return $false
+    }
+
+    Update-ProcessPathFromEnvironment
+    return [bool](Find-AzCopyExecutablePath)
+}
+
+function Resolve-AzCopyExecutablePath {
+    $found = Find-AzCopyExecutablePath
+    if ($found) {
+        return $found
+    }
+
+    if (Install-AzCopyViaWinget) {
+        $found = Find-AzCopyExecutablePath
+        if ($found) {
+            return $found
+        }
+    }
+
+    throw 'AzCopy is not available in PATH, and automatic installation via winget was not successful. Install AzCopy and retry.'
 }
 
 function Ensure-AzCopyDeviceLogin {
