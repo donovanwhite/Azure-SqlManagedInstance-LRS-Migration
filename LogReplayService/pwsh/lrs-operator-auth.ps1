@@ -10,12 +10,11 @@
 #   SystemAssignedManagedIdentity - Connect-AzAccount -Identity (host SAMI)
 #
 # Why this exists:
-#   The SQL Managed Instance Log Replay Service can fail at completeRestore with
-#   InternalServerError when the operator's AAD access token is large (heavy
-#   group membership, optional claims, CAE claims, group-based MI admin, etc.).
-#   The fix is in an upcoming SQL Server CU; in the meantime, running the
-#   wrapper under a low-claim identity (UAMI on an Azure VM is the leanest)
-#   avoids the buffer that the engine truncates.
+#   The SQL Managed Instance Log Replay Service has been observed to fail at
+#   completeRestore with InternalServerError when the operator's AAD access
+#   token is large (heavy group membership, optional claims, CAE claims,
+#   group-based MI admin, etc.). Running the wrapper under a low-claim
+#   identity (UAMI on an Azure VM is the leanest) reduces this risk.
 
 Set-StrictMode -Version Latest
 
@@ -167,10 +166,10 @@ function Get-OperatorTokenDiagnostics {
 
     if ($diagnostics.JwtChars -ge $HardWarnChars) {
         $diagnostics.RiskLevel = 'High'
-        $diagnostics.Warnings += ("Operator JWT is {0} chars (>= {1}). Strongly correlated with the SQL engine InternalServerError defect on completeRestore. Consider running under a UserAssignedManagedIdentity or using -StorageAuthMode Sas." -f $diagnostics.JwtChars, $HardWarnChars)
+        $diagnostics.Warnings += ("Operator JWT is {0} chars (>= {1}). Strongly correlated with InternalServerError on completeRestore. Consider running under a UserAssignedManagedIdentity or using -StorageAuthMode Sas." -f $diagnostics.JwtChars, $HardWarnChars)
     } elseif ($diagnostics.JwtChars -ge $SoftWarnChars) {
         $diagnostics.RiskLevel = 'Elevated'
-        $diagnostics.Warnings += ("Operator JWT is {0} chars (>= {1}). Approaches sizes that have triggered the SQL engine InternalServerError defect on completeRestore." -f $diagnostics.JwtChars, $SoftWarnChars)
+        $diagnostics.Warnings += ("Operator JWT is {0} chars (>= {1}). Approaches sizes that have been correlated with InternalServerError on completeRestore." -f $diagnostics.JwtChars, $SoftWarnChars)
     } elseif ($null -ne $diagnostics.JwtChars) {
         $diagnostics.RiskLevel = 'Low'
     }

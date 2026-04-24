@@ -332,13 +332,13 @@ Both wrappers (`wrapper-execution-multi-offline.ps1` and `wrapper-execution-mult
 | Parameter | Values | Default | Purpose |
 |---|---|---|---|
 | `-StorageAuthMode` | `EntraAzCli`, `EntraDevice`, `Sas` | `EntraAzCli` | How AzCopy authenticates to the storage container during the transfer phase. |
-| `-StorageContainerSasToken` | string | (none) | Required when `-StorageAuthMode Sas`. Used for both the transfer leg and the LRS `StorageContainerIdentity=SharedAccessSignature` call when set. Also the recommended workaround for the SQL engine `InternalServerError`-on-completeRestore defect under MI auth (see below). |
+| `-StorageContainerSasToken` | string | (none) | Required when `-StorageAuthMode Sas`. Used for both the transfer leg and the LRS `StorageContainerIdentity=SharedAccessSignature` call when set. Also a recommended workaround when `completeRestore` returns `InternalServerError` under MI auth (see below). |
 
 ### Operator authentication parameters (both wrappers)
 
 The operator identity is the principal that the **wrapper itself** runs under when it calls ARM (Azure Resource Manager). It is separate from the SQL Managed Instance's own system-assigned managed identity, which governs how the MI itself reads backup blobs.
 
-Choosing a low-claim operator identity (for example a User-Assigned Managed Identity attached to an Azure VM) reduces the size of the ARM access token and mitigates a SQL engine defect where `completeRestore` can fail with `InternalServerError` when the caller's AAD token exceeds an internal buffer size. A fix is pending in an upcoming SQL Server cumulative update.
+Choosing a low-claim operator identity (for example a User-Assigned Managed Identity attached to an Azure VM) reduces the size of the ARM access token. Large operator tokens have been observed to correlate with `completeRestore` returning `InternalServerError`, so a small-claim identity is the safer default.
 
 | Parameter | Values / Type | Default | Purpose |
 |---|---|---|---|
@@ -351,7 +351,7 @@ Choosing a low-claim operator identity (for example a User-Assigned Managed Iden
 | `-OperatorCertificateThumbprint` | string | (none) | Service principal certificate thumbprint. Mutually exclusive with `-OperatorClientSecret`. |
 | `-AutoGrantOperatorRoles` | switch | off | When set, the wrapper will attempt to create missing role assignments for the operator identity (requires the caller to hold `Role Based Access Control Administrator`, `User Access Administrator`, or `Owner` at the target scope). When off, the wrapper fails fast with an explanatory error listing any missing roles. |
 | `-OperatorRequiredRoles` | string[] | (built-in) | Override the default required-role set. Defaults are `SQL Managed Instance Contributor` at the resource group scope, plus `Storage Blob Data Reader` at the storage account scope when not using SAS. |
-| `-SkipTokenSizeCheck` | switch | off | Skip the JWT size diagnostic. Not recommended; the diagnostic is a key signal for the `InternalServerError` defect. |
+| `-SkipTokenSizeCheck` | switch | off | Skip the JWT size diagnostic. Not recommended; the diagnostic is a useful signal when `completeRestore` returns `InternalServerError`. |
 
 When the operator identity is missing a required role and `-AutoGrantOperatorRoles` is not set, the wrapper stops before the LRS phase with a message of the form:
 

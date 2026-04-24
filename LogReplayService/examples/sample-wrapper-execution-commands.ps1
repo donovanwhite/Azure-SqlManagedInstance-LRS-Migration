@@ -87,11 +87,11 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
 # Operator authentication examples
 #
 # Background:
-#   The SQL Managed Instance Log Replay Service can fail at completeRestore with
-#   InternalServerError when the operator's AAD access token is large (heavy AAD group
-#   membership, optional claims, group-based MI admin, etc.). A SQL Server CU fix is
-#   pending; in the meantime, run the wrappers under a low-claim identity. Both UAMI
-#   and SAMI mint small tokens because they have no user-group claims.
+#   The SQL Managed Instance Log Replay Service has been observed to fail at
+#   completeRestore with InternalServerError when the operator's AAD access token is
+#   large (heavy AAD group membership, optional claims, group-based MI admin, etc.).
+#   Running the wrappers under a low-claim identity reduces this risk. Both UAMI and
+#   SAMI mint small tokens because they have no user-group claims.
 #
 #   -AutoGrantOperatorRoles attempts to grant the required role assignments
 #   (SQL Managed Instance Contributor at the RG, plus Storage Blob Data Reader at the
