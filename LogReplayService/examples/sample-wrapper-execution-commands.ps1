@@ -84,6 +84,56 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
     -ScheduledCutoverLocalTime '2026-04-15 15:15'
 
 
+# Operator authentication examples
+#
+# Background:
+#   The SQL Managed Instance Log Replay Service can fail at completeRestore with
+#   InternalServerError when the operator's AAD access token is large (heavy AAD group
+#   membership, optional claims, group-based MI admin, etc.). A SQL Server CU fix is
+#   pending; in the meantime, run the wrappers under a low-claim identity. Both UAMI
+#   and SAMI mint small tokens because they have no user-group claims.
+#
+#   -AutoGrantOperatorRoles attempts to grant the required role assignments
+#   (SQL Managed Instance Contributor at the RG, plus Storage Blob Data Reader at the
+#   storage account when not using SAS). The caller must already hold one of:
+#   Role Based Access Control Administrator, User Access Administrator, or Owner at the
+#   target scope; otherwise the wrapper fails fast with the missing-role list.
+
+# 7. (Optional) Run online from an Azure VM with a User-Assigned Managed Identity attached
+.\wrapper-execution-multi-online.ps1 `
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
+    -BackupRootPath 'C:\SqlBackups' `
+    -SelectedInstanceNames 'SQLHOST01$INST01' `
+    -SelectedDatabaseNames 'SalesDb', 'TenantDb' `
+    -OperatorAuthMode UserAssignedManagedIdentity `
+    -OperatorApplicationId '<uami-client-id-guid>' `
+    -AutoGrantOperatorRoles
+
+# 8. (Optional) Run online from an Azure VM with its System-Assigned Managed Identity enabled
+.\wrapper-execution-multi-online.ps1 `
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
+    -BackupRootPath 'C:\SqlBackups' `
+    -SelectedInstanceNames 'SQLHOST01$INST01' `
+    -SelectedDatabaseNames 'SalesDb', 'TenantDb' `
+    -OperatorAuthMode SystemAssignedManagedIdentity `
+    -AutoGrantOperatorRoles
+
+# 9. (Optional) Same UAMI pattern for the offline wrapper
+.\wrapper-execution-multi-offline.ps1 `
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
+    -BackupRootPath 'C:\SqlBackups' `
+    -SelectedDatabaseNames 'SQLHOST01$INST01\SalesDb', 'SQLHOST01$INST01\TenantDb' `
+    -OperatorAuthMode UserAssignedManagedIdentity `
+    -OperatorApplicationId '<uami-client-id-guid>' `
+    -AutoGrantOperatorRoles
+
+
 # Notes
 # - Offline wrapper performs upload and guided restore completion.
 # - Offline SelectedDatabaseNames accepts either Database or Instance\Database (or Instance::Database).
