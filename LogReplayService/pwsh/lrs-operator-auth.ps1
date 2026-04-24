@@ -259,11 +259,14 @@ function Connect-OperatorAuthIdentity {
             if (-not $haveSecret -and -not $haveCert) {
                 throw "OperatorAuthMode 'ServicePrincipal' requires either -OperatorClientSecret or -OperatorCertificateThumbprint."
             }
+            # SP modes specify Tenant explicitly; remove the duplicate from the splat to avoid a binding conflict.
+            $spArgs = @{}
+            if ($SubscriptionId) { $spArgs['Subscription'] = $SubscriptionId }
             if ($haveSecret) {
                 $cred = [pscredential]::new($ApplicationId, $ClientSecret)
-                Connect-AzAccount -ServicePrincipal -Tenant $TenantId -Credential $cred @connectArgs -ErrorAction Stop | Out-Null
+                Connect-AzAccount -ServicePrincipal -Tenant $TenantId -Credential $cred @spArgs -ErrorAction Stop | Out-Null
             } else {
-                Connect-AzAccount -ServicePrincipal -Tenant $TenantId -ApplicationId $ApplicationId -CertificateThumbprint $CertificateThumbprint @connectArgs -ErrorAction Stop | Out-Null
+                Connect-AzAccount -ServicePrincipal -Tenant $TenantId -ApplicationId $ApplicationId -CertificateThumbprint $CertificateThumbprint @spArgs -ErrorAction Stop | Out-Null
             }
         }
         'UserAssignedManagedIdentity' {
