@@ -133,6 +133,16 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
     -OperatorApplicationId '<uami-client-id-guid>' `
     -AutoGrantOperatorRoles
 
+# 10. (Optional) Same SAMI pattern for the offline wrapper - no client ID needed
+.\wrapper-execution-multi-offline.ps1 `
+    -ResourceGroupName 'rg-sql-mi-migration' `
+    -ManagedInstanceName 'mi-target-001' `
+    -StorageAccountName 'mystorageacct' `
+    -BackupRootPath 'C:\SqlBackups' `
+    -SelectedDatabaseNames 'SQLHOST01$INST01\SalesDb', 'SQLHOST01$INST01\TenantDb' `
+    -OperatorAuthMode SystemAssignedManagedIdentity `
+    -AutoGrantOperatorRoles
+
 
 # Notes
 # - Offline wrapper performs upload and guided restore completion.
