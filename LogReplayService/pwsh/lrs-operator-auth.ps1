@@ -172,13 +172,13 @@ function Get-OperatorTokenDiagnostics {
             $payloadJson = ConvertFrom-OperatorAuthBase64Url -Value $tokenParts[1]
             if ($payloadJson) {
                 $claims = $payloadJson | ConvertFrom-Json -ErrorAction Stop
-                $diagnostics.IdType   = [string]$claims.idtyp
-                $diagnostics.ObjectId = [string]$claims.oid
-                $diagnostics.AppId    = [string]$claims.appid
-                $diagnostics.TenantId = [string]$claims.tid
-                $diagnostics.UPN      = [string]$claims.upn
-                $diagnostics.Audience = [string]$claims.aud
-                $diagnostics.Issuer   = [string]$claims.iss
+                $diagnostics.IdType   = [string](Get-OperatorAuthPropertyValue -InputObject $claims -Name 'idtyp')
+                $diagnostics.ObjectId = [string](Get-OperatorAuthPropertyValue -InputObject $claims -Name 'oid')
+                $diagnostics.AppId    = [string](Get-OperatorAuthPropertyValue -InputObject $claims -Name 'appid')
+                $diagnostics.TenantId = [string](Get-OperatorAuthPropertyValue -InputObject $claims -Name 'tid')
+                $diagnostics.UPN      = [string](Get-OperatorAuthPropertyValue -InputObject $claims -Name 'upn')
+                $diagnostics.Audience = [string](Get-OperatorAuthPropertyValue -InputObject $claims -Name 'aud')
+                $diagnostics.Issuer   = [string](Get-OperatorAuthPropertyValue -InputObject $claims -Name 'iss')
 
                 if ($claims.PSObject.Properties['groups']) {
                     $diagnostics.GroupsCount = @($claims.groups).Count
@@ -486,8 +486,8 @@ function Grant-OperatorRoleAssignments {
             $applied += @{ RoleDefinitionName = $roleName; Scope = $scope }
         } catch {
             $msg = $_.Exception.Message
-            if ($msg -match 'AuthorizationFailed|does not have authorization|RBAC') {
-                throw ("Auto-grant of role '{0}' at scope '{1}' was denied. The principal running this wrapper needs 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' at that scope. Either re-run with sufficient rights, grant the role manually, or omit -AutoGrantOperatorRoles. Underlying error: {2}" -f $roleName, $scope, $msg)
+            if ($msg -match 'AuthorizationFailed|Forbidden|does not have authorization|RBAC') {
+                throw ("Auto-grant of role '{0}' at scope '{1}' was denied. The current Az context principal needs 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' at that scope. In managed-identity auth modes, that principal is the managed identity itself, not the signed-in human user. Grant the missing operator roles manually with a privileged user, or run once in an interactive/user context with -AutoGrantOperatorRoles, then rerun under the managed identity. Underlying error: {2}" -f $roleName, $scope, $msg)
             }
             throw ("Failed to grant role '{0}' at scope '{1}'. {2}" -f $roleName, $scope, $msg)
         }
