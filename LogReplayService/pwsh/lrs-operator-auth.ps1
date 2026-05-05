@@ -95,6 +95,34 @@ function Write-OperatorAuthEvent {
     Write-MigrationEvent @params
 }
 
+function Get-OperatorAuthPropertyValue {
+    param(
+        [object]$InputObject,
+        [Parameter(Mandatory)]
+        [string]$Name
+    )
+
+    if ($null -eq $InputObject) {
+        return $null
+    }
+
+    if ($InputObject -is [System.Collections.IDictionary]) {
+        foreach ($key in $InputObject.Keys) {
+            if ([string]::Equals([string]$key, $Name, [System.StringComparison]::OrdinalIgnoreCase)) {
+                return $InputObject[$key]
+            }
+        }
+        return $null
+    }
+
+    $property = $InputObject.PSObject.Properties[$Name]
+    if ($property) {
+        return $property.Value
+    }
+
+    return $null
+}
+
 function Get-OperatorTokenDiagnostics {
     [CmdletBinding()]
     param(
@@ -190,17 +218,20 @@ function Resolve-OperatorPrincipalId {
 
     if (Get-Command Get-AzContext -ErrorAction SilentlyContinue) {
         $context = Get-AzContext -ErrorAction SilentlyContinue
-        if ($context -and $context.Account -and $context.Account.Id) {
+        $account = Get-OperatorAuthPropertyValue -InputObject $context -Name 'Account'
+        $accountId = Get-OperatorAuthPropertyValue -InputObject $account -Name 'Id'
+        $accountType = Get-OperatorAuthPropertyValue -InputObject $account -Name 'Type'
+        if ($context -and $accountId) {
             # For SP/MI the Account.Id is the appId; for users it is UPN.
-            if ($context.Account.Type -in @('ServicePrincipal', 'ManagedService') -and (Get-Command Get-AzADServicePrincipal -ErrorAction SilentlyContinue)) {
+            if ($accountType -in @('ServicePrincipal', 'ManagedService') -and (Get-Command Get-AzADServicePrincipal -ErrorAction SilentlyContinue)) {
                 try {
-                    $sp = Get-AzADServicePrincipal -ApplicationId $context.Account.Id -ErrorAction Stop
+                    $sp = Get-AzADServicePrincipal -ApplicationId $accountId -ErrorAction Stop
                     if ($sp) { return $sp.Id }
                 } catch { }
             }
             if (Get-Command Get-AzADUser -ErrorAction SilentlyContinue) {
                 try {
-                    $user = Get-AzADUser -UserPrincipalName $context.Account.Id -ErrorAction Stop
+                    $user = Get-AzADUser -UserPrincipalName $accountId -ErrorAction Stop
                     if ($user) { return $user.Id }
                 } catch { }
             }
@@ -313,8 +344,10 @@ function Resolve-OperatorSubscriptionSelection {
     }
 
     $context = Get-AzContext -ErrorAction SilentlyContinue
-    if ($context -and $context.Subscription -and $context.Subscription.Id) {
-        return [string]$context.Subscription.Id
+    $contextSubscription = Get-OperatorAuthPropertyValue -InputObject $context -Name 'Subscription'
+    $contextSubscriptionId = Get-OperatorAuthPropertyValue -InputObject $contextSubscription -Name 'Id'
+    if ($context -and $contextSubscriptionId) {
+        return [string]$contextSubscriptionId
     }
 
     if (-not (Get-Command Get-AzSubscription -ErrorAction SilentlyContinue)) {
@@ -522,11 +555,20 @@ function Initialize-OperatorAuthContext {
 
     $context = Get-AzContext -ErrorAction SilentlyContinue
     if ($context) {
-        $accountId   = if ($context.Account)      { [string]$context.Account.Id }      else { '<unknown>' }
-        $accountType = if ($context.Account)      { [string]$context.Account.Type }    else { '<unknown>' }
-        $tenantText  = if ($context.Tenant)       { [string]$context.Tenant.Id }       else { '<none>' }
-        $subId       = if ($context.Subscription) { [string]$context.Subscription.Id } else { '<none>' }
-        $subName     = if ($context.Subscription) { [string]$context.Subscription.Name } else { '<none>' }
+        $contextAccount = Get-OperatorAuthPropertyValue -InputObject $context -Name 'Account'
+        $contextTenant = Get-OperatorAuthPropertyValue -InputObject $context -Name 'Tenant'
+        $contextSubscription = Get-OperatorAuthPropertyValue -InputObject $context -Name 'Subscription'
+        $accountIdValue = Get-OperatorAuthPropertyValue -InputObject $contextAccount -Name 'Id'
+        $accountTypeValue = Get-OperatorAuthPropertyValue -InputObject $contextAccount -Name 'Type'
+        $tenantIdValue = Get-OperatorAuthPropertyValue -InputObject $contextTenant -Name 'Id'
+        $subIdValue = Get-OperatorAuthPropertyValue -InputObject $contextSubscription -Name 'Id'
+        $subNameValue = Get-OperatorAuthPropertyValue -InputObject $contextSubscription -Name 'Name'
+
+        $accountId   = if ($accountIdValue)   { [string]$accountIdValue }   else { '<unknown>' }
+        $accountType = if ($accountTypeValue) { [string]$accountTypeValue } else { '<unknown>' }
+        $tenantText  = if ($tenantIdValue)    { [string]$tenantIdValue }    else { '<none>' }
+        $subId       = if ($subIdValue)       { [string]$subIdValue }       else { '<none>' }
+        $subName     = if ($subNameValue)     { [string]$subNameValue }     else { '<none>' }
         Write-Host ("Account: {0} ({1})" -f $accountId, $accountType)
         Write-Host ("Tenant : {0}" -f $tenantText)
         Write-Host ("Sub    : {0} ({1})" -f $subId, $subName)
@@ -604,15 +646,21 @@ Re-run the wrapper with -AutoGrantOperatorRoles to attempt automatic grant (requ
         }
     }
 
-    $effectiveTenant = if ($context -and $context.Tenant)       { [string]$context.Tenant.Id }       else { $TenantId }
-    $effectiveSub    = if ($context -and $context.Subscription) { [string]$context.Subscription.Id } else { $SubscriptionId }
+    $effectiveTenantValue = Get-OperatorAuthPropertyValue -InputObject (Get-OperatorAuthPropertyValue -InputObject $context -Name 'Tenant') -Name 'Id'
+    $effectiveSubValue = Get-OperatorAuthPropertyValue -InputObject (Get-OperatorAuthPropertyValue -InputObject $context -Name 'Subscription') -Name 'Id'
+    $effectiveTenant = if ($effectiveTenantValue) { [string]$effectiveTenantValue } else { $TenantId }
+    $effectiveSub    = if ($effectiveSubValue)    { [string]$effectiveSubValue }    else { $SubscriptionId }
+
+    $authAccount = Get-OperatorAuthPropertyValue -InputObject $context -Name 'Account'
+    $authAccountId = Get-OperatorAuthPropertyValue -InputObject $authAccount -Name 'Id'
+    $authAccountType = Get-OperatorAuthPropertyValue -InputObject $authAccount -Name 'Type'
 
     $authState = [pscustomobject][ordered]@{
         Mode               = $Mode
         TenantId           = $effectiveTenant
         SubscriptionId     = $effectiveSub
-        AccountId          = if ($context -and $context.Account) { [string]$context.Account.Id }   else { $null }
-        AccountType        = if ($context -and $context.Account) { [string]$context.Account.Type } else { $null }
+        AccountId          = if ($authAccountId) { [string]$authAccountId } else { $null }
+        AccountType        = if ($authAccountType) { [string]$authAccountType } else { $null }
         PrincipalId        = $principalId
         ApplicationId      = $ApplicationId
         TokenDiagnostics   = $diagnostics
