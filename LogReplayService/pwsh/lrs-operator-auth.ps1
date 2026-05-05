@@ -365,7 +365,8 @@ function Resolve-OperatorSubscriptionSelection {
 
     $subs = @($subs | Where-Object { $_ -and $_.State -eq 'Enabled' })
     if ($subs.Count -eq 0) {
-        throw "No enabled subscriptions are visible to the operator identity$([string](if ($TenantId) { " in tenant $TenantId" } else { '' })). Re-run with -SubscriptionId explicitly set, or grant the operator identity access to at least one subscription."
+        $tenantMessage = if ($TenantId) { " in tenant $TenantId" } else { '' }
+        throw "No enabled subscriptions are visible to the operator identity$tenantMessage. Re-run with -SubscriptionId explicitly set, or grant the operator identity access to at least one subscription."
     }
 
     if ($subs.Count -eq 1) {
@@ -667,12 +668,14 @@ Re-run the wrapper with -AutoGrantOperatorRoles to attempt automatic grant (requ
         RoleCheck          = $rbac
     }
 
+    $eventLevel = if ($diagnostics -and $diagnostics.RiskLevel -in @('High', 'Elevated')) { 'Warning' } else { 'Info' }
+
     Write-OperatorAuthEvent `
         -EventLogPath $EventLogPath `
         -RunId $RunId `
         -Source $EventSource `
         -Mode $EventMode `
-        -Level (if ($diagnostics -and $diagnostics.RiskLevel -eq 'High') { 'Warning' } elseif ($diagnostics -and $diagnostics.RiskLevel -eq 'Elevated') { 'Warning' } else { 'Info' }) `
+        -Level $eventLevel `
         -Action 'OperatorAuthInitialized' `
         -Message ("Operator auth initialized using mode '{0}'." -f $Mode) `
         -Data @{
