@@ -126,9 +126,58 @@ Primary entry points:
 - Azure CLI 2.42.0 or newer.
 - Az.Sql PowerShell module 4.0.0 or newer.
 - Access to Azure Storage for AzCopy uploads.
-- SQL Managed Instance managed identity granted `Storage Blob Data Reader` or equivalent Read/List access on the target container or storage account.
-- Operator identity granted upload permissions such as `Storage Blob Data Contributor` or `Storage Blob Data Owner` when using Entra-based uploads.
 - Backup files arranged in the expected source layout.
+
+### Required RBAC role assignments
+
+There are two distinct identities involved. Grant them the roles below at the exact scopes shown; the preflight in the wrappers checks at these scopes and will fail fast otherwise.
+
+Operator identity (the principal the wrapper runs under — user, service principal, or managed identity):
+
+| Role | Scope | Why |
+|---|---|---|
+| `SQL Managed Instance Contributor` | Resource group containing the target Managed Instance (for example `/subscriptions/<sub>/resourceGroups/<rg>`). | Required to start, monitor, and complete LRS on the Managed Instance. Assignments scoped only to the MI resource itself are not detected by the preflight; grant at the resource group (or above). |
+| `Storage Blob Data Contributor` (or `Storage Blob Data Owner`) | Storage account hosting the LRS container (for example `/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account>`). | The operator creates the destination container (`azcopy make`) and uploads backup blobs. Read-only roles such as `Storage Blob Data Reader` are not sufficient on the operator side. Skip this when using `-StorageAuthMode Sas`. |
+
+SQL Managed Instance system-assigned managed identity (the MI itself, used by LRS to read backups at restore time):
+
+| Role | Scope | Why |
+|---|---|---|
+| `Storage Blob Data Reader` (or any role granting Read/List on blobs) | Target container or the storage account. | LRS streams backup blobs from storage using the MI's managed identity. Read access is enough — no write access is required on this identity. |
+
+Notes:
+
+- RBAC changes commonly take 5–10 minutes to propagate before ARM filter queries observe them; if the preflight reports a role as missing immediately after granting it, wait and re-run.
+- `Storage Blob Data Owner` is accepted as a superset of `Storage Blob Data Contributor` on the operator side.
+- See `-AutoGrantOperatorRoles` below for an option that creates missing operator role assignments automatically (requires elevated rights on the caller).
+
+### PowerShell execution policy
+
+The wrapper scripts are unsigned PowerShell scripts. On Windows hosts running with the default `Restricted` or `RemoteSigned` execution policy, files downloaded from the internet are marked with the Zone Identifier alternate data stream and prompt with a security warning on each invocation, for example:
+
+```text
+Security warning
+Run only scripts that you trust. While scripts from the internet can be useful, this script can
+potentially harm your computer. ...
+[D] Do not run  [R] Run once  [S] Suspend  [?] Help (default is "D"):
+```
+
+To trust the scripts in this repository and avoid the prompt on every run, do one of the following on the machine that will execute the wrappers (only after you have reviewed the source):
+
+- Recommended: clear the Zone Identifier on the cloned/extracted folder.
+
+  ```powershell
+  Get-ChildItem -Path 'C:\path\to\Azure-SqlManagedInstance-LRS-Migration' -Recurse -File |
+      Unblock-File
+  ```
+
+- Or set an execution policy for the current user that allows local unsigned scripts (combine with `Unblock-File` for downloaded scripts):
+
+  ```powershell
+  Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+  ```
+
+Avoid `-ExecutionPolicy Bypass` and machine-wide policy changes unless your environment requires them.
 
 Authentication behavior:
 
@@ -350,7 +399,7 @@ Choosing a low-claim operator identity (for example a User-Assigned Managed Iden
 | `-OperatorClientSecret` | SecureString | (none) | Service principal client secret. Mutually exclusive with `-OperatorCertificateThumbprint`. |
 | `-OperatorCertificateThumbprint` | string | (none) | Service principal certificate thumbprint. Mutually exclusive with `-OperatorClientSecret`. |
 | `-AutoGrantOperatorRoles` | switch | off | When set, the wrapper will attempt to create missing role assignments for the operator identity (requires the caller to hold `Role Based Access Control Administrator`, `User Access Administrator`, or `Owner` at the target scope). When off, the wrapper fails fast with an explanatory error listing any missing roles. |
-| `-OperatorRequiredRoles` | string[] | (built-in) | Override the default required-role set. Defaults are `SQL Managed Instance Contributor` at the resource group scope, plus `Storage Blob Data Reader` at the storage account scope when not using SAS. |
+| `-OperatorRequiredRoles` | string[] | (built-in) | Override the default required-role set. Defaults are `SQL Managed Instance Contributor` at the resource group scope, plus `Storage Blob Data Contributor` at the storage account scope when not using SAS (`Storage Blob Data Owner` is also accepted). |
 | `-SkipTokenSizeCheck` | switch | off | Skip the JWT size diagnostic. Not recommended; the diagnostic is a useful signal when `completeRestore` returns `InternalServerError`. |
 
 When the operator identity is missing a required role and `-AutoGrantOperatorRoles` is not set, the wrapper stops before the LRS phase with a message of the form:
