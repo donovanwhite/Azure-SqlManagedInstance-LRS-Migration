@@ -481,9 +481,31 @@ function Test-OperatorRoleAssignments {
 
         if (-not $roleName -or -not $scope) { continue }
 
-        $roleDefId = Resolve-OperatorRoleDefinitionId -RoleName $roleName -Scope $scope
-        if (-not $roleDefId) {
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = "Could not resolve role definition id for '$roleName' via ARM at or above scope '$scope'." }
+        # A requirement can be satisfied by any of an explicit list of roles
+        # (e.g. Storage Blob Data Contributor is also satisfied by Storage Blob
+        # Data Owner). If AcceptableRoleDefinitionNames is not provided, fall
+        # back to the single primary role.
+        $acceptableNames = @()
+        if ($req.ContainsKey('AcceptableRoleDefinitionNames') -and $req['AcceptableRoleDefinitionNames']) {
+            $acceptableNames = @($req['AcceptableRoleDefinitionNames'] | Where-Object { $_ })
+        }
+        if ($acceptableNames.Count -eq 0) {
+            $acceptableNames = @($roleName)
+        }
+
+        $acceptableGuids = @()
+        $lookupErrors = @()
+        foreach ($candidateName in $acceptableNames) {
+            $cid = Resolve-OperatorRoleDefinitionId -RoleName $candidateName -Scope $scope
+            if ($cid) {
+                $acceptableGuids += (($cid -split '/')[ -1 ])
+            } else {
+                $lookupErrors += "Could not resolve role definition id for '$candidateName' via ARM at or above scope '$scope'."
+            }
+        }
+
+        if ($acceptableGuids.Count -eq 0) {
+            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = ($lookupErrors -join ' ') }
             continue
         }
 
@@ -514,24 +536,28 @@ function Test-OperatorRoleAssignments {
             continue
         }
 
-        $found = $false
+        $matchedName = $null
         foreach ($a in @($body.value)) {
             $props = $a.properties
             if (-not $props) { continue }
             $rdId = [string]$props.roleDefinitionId
             $assignedPrincipalId = [string]$props.principalId
             if ($assignedPrincipalId -ne $PrincipalId) { continue }
-            # roleDefinitionId is full ARM id; match on trailing GUID.
-            $reqGuid = ($roleDefId -split '/')[ -1 ]
+            # roleDefinitionId is full ARM id; match on trailing GUID against any
+            # of the acceptable role definition GUIDs.
             $haveGuid = ($rdId -split '/')[ -1 ]
-            if ([string]::Equals($reqGuid, $haveGuid, [System.StringComparison]::OrdinalIgnoreCase)) {
-                $found = $true
-                break
+            for ($i = 0; $i -lt $acceptableGuids.Count; $i++) {
+                if ([string]::Equals($acceptableGuids[$i], $haveGuid, [System.StringComparison]::OrdinalIgnoreCase)) {
+                    $matchedName = $acceptableNames[$i]
+                    break
+                }
             }
+            if ($matchedName) { break }
         }
 
-        if ($found) {
-            $present += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason }
+        if ($matchedName) {
+            # Surface the role we actually matched (may be a superset of the primary).
+            $present += @{ RoleDefinitionName = $matchedName; Scope = $scope; Reason = $reason }
         } else {
             $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason }
         }
@@ -723,11 +749,15 @@ function Get-OperatorRoleRequirementSet {
     .SYNOPSIS
         Builds the default required-role list for the LRS wrappers.
     .DESCRIPTION
-        Returns an array of @{ RoleDefinitionName; Scope; Reason } entries
-        suitable for Initialize-OperatorAuthContext. Always requires SQL
-        Managed Instance Contributor at the resource group scope. Adds
-        Storage Blob Data Reader at the storage account scope only when
-        a storage account is configured AND storage auth is not SAS.
+        Returns an array of @{ RoleDefinitionName; Scope; Reason;
+        AcceptableRoleDefinitionNames } entries suitable for
+        Initialize-OperatorAuthContext. Always requires SQL Managed Instance
+        Contributor at the resource group scope. Adds Storage Blob Data
+        Contributor at the storage account scope only when a storage account
+        is configured AND storage auth is not SAS. The operator needs write
+        access because the transfer step creates the container (azcopy make)
+        and uploads backup blobs; Storage Blob Data Owner is also accepted
+        as a superset of Contributor.
     #>
     [CmdletBinding()]
     param(
@@ -768,9 +798,10 @@ function Get-OperatorRoleRequirementSet {
 
     if ($usesStorageBlobAuth) {
         $required += @{
-            RoleDefinitionName = 'Storage Blob Data Reader'
-            Scope              = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName"
-            Reason             = 'Required for the operator identity to enumerate backup blobs without SAS.'
+            RoleDefinitionName             = 'Storage Blob Data Contributor'
+            AcceptableRoleDefinitionNames  = @('Storage Blob Data Contributor', 'Storage Blob Data Owner')
+            Scope                          = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName"
+            Reason                         = 'Required for the operator to create the LRS container and upload backup blobs (azcopy make + azcopy copy) without SAS. Storage Blob Data Owner also satisfies this.'
         }
     }
 
