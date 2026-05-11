@@ -93,11 +93,10 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
 #   Running the wrappers under a low-claim identity reduces this risk. Both UAMI and
 #   SAMI mint small tokens because they have no user-group claims.
 #
-#   -AutoGrantOperatorRoles attempts to grant the required role assignments
+#   The operator identity must already hold the required role assignments
 #   (SQL Managed Instance Contributor at the RG, plus Storage Blob Data Reader at the
-#   storage account when not using SAS). The caller must already hold one of:
-#   Role Based Access Control Administrator, User Access Administrator, or Owner at the
-#   target scope; otherwise the wrapper fails fast with the missing-role list.
+#   storage account when not using SAS). The wrapper performs a preflight check and
+#   fails fast with the missing-role list if any required role is not assigned.
 
 # 7. (Optional) Run online from an Azure VM with a User-Assigned Managed Identity attached
 .\wrapper-execution-multi-online.ps1 `
@@ -108,8 +107,7 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
     -SelectedInstanceNames 'SQLHOST01$INST01' `
     -SelectedDatabaseNames 'SalesDb', 'TenantDb' `
     -OperatorAuthMode UserAssignedManagedIdentity `
-    -OperatorApplicationId '<uami-client-id-guid>' `
-    -AutoGrantOperatorRoles
+    -OperatorApplicationId '<uami-client-id-guid>'
 
 # 8. (Optional) Run online from an Azure VM with its System-Assigned Managed Identity enabled
 .\wrapper-execution-multi-online.ps1 `
@@ -119,8 +117,7 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
     -BackupRootPath 'C:\SqlBackups' `
     -SelectedInstanceNames 'SQLHOST01$INST01' `
     -SelectedDatabaseNames 'SalesDb', 'TenantDb' `
-    -OperatorAuthMode SystemAssignedManagedIdentity `
-    -AutoGrantOperatorRoles
+    -OperatorAuthMode SystemAssignedManagedIdentity
 
 # 9. (Optional) Same UAMI pattern for the offline wrapper
 .\wrapper-execution-multi-offline.ps1 `
@@ -130,8 +127,7 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
     -BackupRootPath 'C:\SqlBackups' `
     -SelectedDatabaseNames 'SQLHOST01$INST01\SalesDb', 'SQLHOST01$INST01\TenantDb' `
     -OperatorAuthMode UserAssignedManagedIdentity `
-    -OperatorApplicationId '<uami-client-id-guid>' `
-    -AutoGrantOperatorRoles
+    -OperatorApplicationId '<uami-client-id-guid>'
 
 # 10. (Optional) Same SAMI pattern for the offline wrapper - no client ID needed
 .\wrapper-execution-multi-offline.ps1 `
@@ -140,8 +136,7 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
     -StorageAccountName 'mystorageacct' `
     -BackupRootPath 'C:\SqlBackups' `
     -SelectedDatabaseNames 'SQLHOST01$INST01\SalesDb', 'SQLHOST01$INST01\TenantDb' `
-    -OperatorAuthMode SystemAssignedManagedIdentity `
-    -AutoGrantOperatorRoles
+    -OperatorAuthMode SystemAssignedManagedIdentity
 
 
 # Notes

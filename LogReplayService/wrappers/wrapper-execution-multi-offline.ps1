@@ -23,7 +23,6 @@ param(
     [string]$OperatorApplicationId,
     [securestring]$OperatorClientSecret,
     [string]$OperatorCertificateThumbprint,
-    [switch]$AutoGrantOperatorRoles,
     [string[]]$OperatorRequiredRoles,
     [switch]$SkipTokenSizeCheck
 )
@@ -814,7 +813,6 @@ $operatorAuth = Initialize-OperatorAuthContext `
     -ClientSecret $OperatorClientSecret `
     -CertificateThumbprint $OperatorCertificateThumbprint `
     -RequiredRoleAssignments $operatorRoleRequirements `
-    -AutoGrantRoles:$AutoGrantOperatorRoles `
     -SkipTokenSizeCheck:$SkipTokenSizeCheck `
     -EventLogPath $wrapperEventLogPath `
     -RunId $runId `

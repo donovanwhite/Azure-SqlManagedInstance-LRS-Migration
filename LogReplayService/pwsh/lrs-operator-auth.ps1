@@ -115,9 +115,18 @@ function Get-OperatorAuthPropertyValue {
         return $null
     }
 
-    $property = $InputObject.PSObject.Properties[$Name]
-    if ($property) {
-        return $property.Value
+    # Iterate Properties via the enumerator rather than the indexer. The PSObject
+    # property indexer can raise PropertyNotFoundException under Set-StrictMode -Latest
+    # for some object shapes (notably JWT claims parsed by ConvertFrom-Json that
+    # lack optional claims such as 'upn' for app-only tokens). Enumerating is safe.
+    try {
+        foreach ($prop in $InputObject.PSObject.Properties) {
+            if ([string]::Equals($prop.Name, $Name, [System.StringComparison]::OrdinalIgnoreCase)) {
+                return $prop.Value
+            }
+        }
+    } catch {
+        return $null
     }
 
     return $null
@@ -418,13 +427,48 @@ function Test-OperatorRoleAssignments {
         [hashtable[]]$Required
     )
 
-    if (-not (Get-Command Get-AzRoleAssignment -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command Invoke-AzRestMethod -ErrorAction SilentlyContinue)) {
         return @{
             Available = $false
             Missing   = @()
             Present   = @()
-            Error     = "Az.Resources is not available; cannot evaluate RBAC preflight. Install Az.Resources to enable role checks."
+            Error     = "Az.Accounts is not available; cannot evaluate RBAC preflight. Install Az.Accounts to enable role checks."
         }
+    }
+
+    # Resolve role definition IDs once per role name. Role assignments returned by
+    # ARM only carry roleDefinitionId, not the friendly name, so we match by GUID.
+    # We do this via ARM REST as well to avoid Microsoft Graph dependencies that
+    # Get-AzRoleDefinition / Get-AzRoleAssignment can implicitly require when the
+    # current context is a System/User Assigned Managed Identity without Graph
+    # permissions (a common failure mode that silently returns empty results).
+    $roleDefIdCache = @{}
+    function Resolve-OperatorRoleDefinitionId {
+        param([string]$RoleName, [string]$Scope)
+        if ($roleDefIdCache.ContainsKey($RoleName)) { return $roleDefIdCache[$RoleName] }
+
+        $encodedFilter = [Uri]::EscapeDataString("roleName eq '$RoleName'")
+        $defPath = "$Scope/providers/Microsoft.Authorization/roleDefinitions?api-version=2022-04-01&`$filter=$encodedFilter"
+        try {
+            $resp = Invoke-AzRestMethod -Method GET -Path $defPath -ErrorAction Stop
+        } catch {
+            return $null
+        }
+        if (-not $resp -or $resp.StatusCode -ge 400) { return $null }
+        try {
+            $body = $resp.Content | ConvertFrom-Json -ErrorAction Stop
+        } catch {
+            return $null
+        }
+        $defId = $null
+        foreach ($item in @($body.value)) {
+            if ($item.properties.roleName -eq $RoleName) {
+                $defId = [string]$item.id
+                break
+            }
+        }
+        $roleDefIdCache[$RoleName] = $defId
+        return $defId
     }
 
     $present = @()
@@ -437,14 +481,53 @@ function Test-OperatorRoleAssignments {
 
         if (-not $roleName -or -not $scope) { continue }
 
-        $found = $null
+        $roleDefId = Resolve-OperatorRoleDefinitionId -RoleName $roleName -Scope $scope
+        if (-not $roleDefId) {
+            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = "Could not resolve role definition id for '$roleName' via ARM at or above scope '$scope'." }
+            continue
+        }
+
+        # atScope() + principalId filter returns direct + inherited assignments for the
+        # principal, scoped to ancestors of $scope. This is exactly what we want for a
+        # preflight check against a resource group or single resource.
+        $encodedAssignFilter = [Uri]::EscapeDataString("atScope() and assignedTo('$PrincipalId')")
+        $assignPath = "$scope/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01&`$filter=$encodedAssignFilter"
+
+        $assignResp = $null
         try {
-            $found = Get-AzRoleAssignment -ObjectId $PrincipalId -RoleDefinitionName $roleName -Scope $scope -ErrorAction Stop |
-                Where-Object { $_.Scope -eq $scope -or $scope.StartsWith($_.Scope, [System.StringComparison]::OrdinalIgnoreCase) } |
-                Select-Object -First 1
+            $assignResp = Invoke-AzRestMethod -Method GET -Path $assignPath -ErrorAction Stop
         } catch {
             $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = $_.Exception.Message }
             continue
+        }
+
+        if (-not $assignResp -or $assignResp.StatusCode -ge 400) {
+            $statusText = if ($assignResp) { "HTTP $($assignResp.StatusCode): $($assignResp.Content)" } else { 'no response' }
+            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = $statusText }
+            continue
+        }
+
+        try {
+            $body = $assignResp.Content | ConvertFrom-Json -ErrorAction Stop
+        } catch {
+            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = "Could not parse role assignment response: $($_.Exception.Message)" }
+            continue
+        }
+
+        $found = $false
+        foreach ($a in @($body.value)) {
+            $props = $a.properties
+            if (-not $props) { continue }
+            $rdId = [string]$props.roleDefinitionId
+            $assignedPrincipalId = [string]$props.principalId
+            if ($assignedPrincipalId -ne $PrincipalId) { continue }
+            # roleDefinitionId is full ARM id; match on trailing GUID.
+            $reqGuid = ($roleDefId -split '/')[ -1 ]
+            $haveGuid = ($rdId -split '/')[ -1 ]
+            if ([string]::Equals($reqGuid, $haveGuid, [System.StringComparison]::OrdinalIgnoreCase)) {
+                $found = $true
+                break
+            }
         }
 
         if ($found) {
@@ -460,45 +543,6 @@ function Test-OperatorRoleAssignments {
         Present   = $present
         Error     = $null
     }
-}
-
-function Grant-OperatorRoleAssignments {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$PrincipalId,
-        [Parameter(Mandatory)]
-        [hashtable[]]$Missing
-    )
-
-    if (-not (Get-Command New-AzRoleAssignment -ErrorAction SilentlyContinue)) {
-        throw "Cannot auto-grant operator roles: New-AzRoleAssignment is not available. Install Az.Resources."
-    }
-
-    $applied = @()
-
-    foreach ($req in $Missing) {
-        $roleName = [string]$req['RoleDefinitionName']
-        $scope    = [string]$req['Scope']
-
-        try {
-            New-AzRoleAssignment -ObjectId $PrincipalId -RoleDefinitionName $roleName -Scope $scope -ErrorAction Stop | Out-Null
-            $applied += @{ RoleDefinitionName = $roleName; Scope = $scope }
-        } catch {
-            $msg = $_.Exception.Message
-            if ($msg -match 'AuthorizationFailed|Forbidden|does not have authorization|RBAC') {
-                throw ("Auto-grant of role '{0}' at scope '{1}' was denied. The current Az context principal needs 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' at that scope. In managed-identity auth modes, that principal is the managed identity itself, not the signed-in human user. Grant the missing operator roles manually with a privileged user, or run once in an interactive/user context with -AutoGrantOperatorRoles, then rerun under the managed identity. Underlying error: {2}" -f $roleName, $scope, $msg)
-            }
-            throw ("Failed to grant role '{0}' at scope '{1}'. {2}" -f $roleName, $scope, $msg)
-        }
-    }
-
-    # Allow time for RBAC propagation before downstream calls evaluate the grant.
-    if ($applied.Count -gt 0) {
-        Start-Sleep -Seconds 10
-    }
-
-    return $applied
 }
 
 function Initialize-OperatorAuthContext {
@@ -525,7 +569,6 @@ function Initialize-OperatorAuthContext {
         [string]$CertificateThumbprint,
 
         [hashtable[]]$RequiredRoleAssignments,
-        [switch]$AutoGrantRoles,
         [switch]$SkipTokenSizeCheck,
 
         [string]$EventLogPath,
@@ -613,36 +656,13 @@ function Initialize-OperatorAuthContext {
             }
 
             if ($rbac.Missing.Count -gt 0) {
-                if ($AutoGrantRoles) {
-                    Write-Host 'AutoGrantOperatorRoles is enabled; attempting to grant missing roles...' -ForegroundColor Cyan
-                    $applied = Grant-OperatorRoleAssignments -PrincipalId $principalId -Missing $rbac.Missing
-                    foreach ($a in $applied) {
-                        Write-Host ("  [GRANTED] {0}  @  {1}" -f $a.RoleDefinitionName, $a.Scope) -ForegroundColor Green
-                    }
-                    $rbac['Applied'] = $applied
-
-                    if ($ReportDir) {
-                        try {
-                            $auditPath = Join-Path -Path $ReportDir -ChildPath 'auth-grants-applied.json'
-                            $audit = @{
-                                principalId = $principalId
-                                appliedAt   = (Get-Date).ToUniversalTime().ToString('o')
-                                grants      = $applied
-                            }
-                            $audit | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $auditPath -Encoding UTF8
-                        } catch {
-                            Write-Warning "Failed to write auth-grants-applied.json: $($_.Exception.Message)"
-                        }
-                    }
-                } else {
-                    $missingList = ($rbac.Missing | ForEach-Object { "    - {0} @ {1}  ({2})" -f $_.RoleDefinitionName, $_.Scope, $_.Reason }) -join "`n"
-                    throw @"
+                $missingList = ($rbac.Missing | ForEach-Object { "    - {0} @ {1}  ({2})" -f $_.RoleDefinitionName, $_.Scope, $_.Reason }) -join "`n"
+                throw @"
 Operator RBAC preflight failed. The current operator identity is missing the following role assignments:
 $missingList
 
-Re-run the wrapper with -AutoGrantOperatorRoles to attempt automatic grant (requires the executing user to hold 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' on the relevant scopes), or grant the roles manually before re-running.
+Grant the missing roles to the operator identity (e.g. via 'az role assignment create' or 'New-AzRoleAssignment' run as a user holding 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' at the relevant scope), then re-run the wrapper.
 "@
-                }
             }
         }
     }
@@ -693,8 +713,6 @@ Re-run the wrapper with -AutoGrantOperatorRoles to attempt automatic grant (requ
             tokenWarnings    = if ($diagnostics) { @($diagnostics.Warnings) } else { @() }
             requiredRoles    = if ($RequiredRoleAssignments) { @($RequiredRoleAssignments | ForEach-Object { @{ role = $_['RoleDefinitionName']; scope = $_['Scope'] } }) } else { @() }
             missingRoles     = if ($rbac -and $rbac.Missing) { @($rbac.Missing | ForEach-Object { @{ role = $_['RoleDefinitionName']; scope = $_['Scope'] } }) } else { @() }
-            grantedRoles     = if ($rbac -and $rbac['Applied']) { @($rbac['Applied'] | ForEach-Object { @{ role = $_['RoleDefinitionName']; scope = $_['Scope'] } }) } else { @() }
-            autoGrantEnabled = [bool]$AutoGrantRoles
         }
 
     return $authState
