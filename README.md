@@ -149,7 +149,6 @@ Notes:
 
 - RBAC changes commonly take 5–10 minutes to propagate before ARM filter queries observe them; if the preflight reports a role as missing immediately after granting it, wait and re-run.
 - `Storage Blob Data Owner` is accepted as a superset of `Storage Blob Data Contributor` on the operator side.
-- See `-AutoGrantOperatorRoles` below for an option that creates missing operator role assignments automatically (requires elevated rights on the caller).
 
 ### PowerShell execution policy
 
@@ -398,18 +397,17 @@ Choosing a low-claim operator identity (for example a User-Assigned Managed Iden
 | `-OperatorApplicationId` | string | (none) | Service principal app ID (for `ServicePrincipal`), or UAMI client ID (for `UserAssignedManagedIdentity`). |
 | `-OperatorClientSecret` | SecureString | (none) | Service principal client secret. Mutually exclusive with `-OperatorCertificateThumbprint`. |
 | `-OperatorCertificateThumbprint` | string | (none) | Service principal certificate thumbprint. Mutually exclusive with `-OperatorClientSecret`. |
-| `-AutoGrantOperatorRoles` | switch | off | When set, the wrapper will attempt to create missing role assignments for the operator identity (requires the caller to hold `Role Based Access Control Administrator`, `User Access Administrator`, or `Owner` at the target scope). When off, the wrapper fails fast with an explanatory error listing any missing roles. |
 | `-OperatorRequiredRoles` | string[] | (built-in) | Override the default required-role set. Defaults are `SQL Managed Instance Contributor` at the resource group scope, plus `Storage Blob Data Contributor` at the storage account scope when not using SAS (`Storage Blob Data Owner` is also accepted). |
 | `-SkipTokenSizeCheck` | switch | off | Skip the JWT size diagnostic. Not recommended; the diagnostic is a useful signal when `completeRestore` returns `InternalServerError`. |
 
-When the operator identity is missing a required role and `-AutoGrantOperatorRoles` is not set, the wrapper stops before the LRS phase with a message of the form:
+When the operator identity is missing a required role, the wrapper stops before the LRS phase with a message of the form:
 
 ```text
 Operator RBAC preflight failed. The current operator identity is missing the following role assignments:
     - SQL Managed Instance Contributor @ /subscriptions/.../resourceGroups/rg_sql_dev_zan  (Required to start, monitor, and complete LRS on the Managed Instance.)
 ```
 
-When `-AutoGrantOperatorRoles` is set, every grant is recorded in the run's report folder as `auth-grants-applied.json` so it can be audited or reverted later.
+Grant the missing roles at the scopes listed in the [Required RBAC role assignments](#required-rbac-role-assignments) section (for example via `az role assignment create` or `New-AzRoleAssignment`), wait for RBAC propagation, then re-run the wrapper.
 
 ### Online-only parameters
 
