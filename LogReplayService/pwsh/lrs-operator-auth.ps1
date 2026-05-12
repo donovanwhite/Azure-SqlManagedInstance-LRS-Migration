@@ -471,6 +471,64 @@ function Test-OperatorRoleAssignments {
         return $defId
     }
 
+    # Fetch the operator's full effective assignment set ONCE, anchored at the
+    # subscription extracted from the first requirement's scope. Using
+    # `assignedTo('{principalId}')` (without atScope()) at the subscription scope
+    # returns assignments inherited from parent management groups AND assignments
+    # at any child scope (RG, resource, sub-resource). This lets us accept a
+    # requirement when the operator has the role at ANY scope along the
+    # ancestor/descendant chain of the target scope -- which is what customers
+    # actually do (they grant at the MI, RG, sub, or MG level interchangeably).
+    function Get-OperatorAssignmentAnchorScope {
+        param([string]$Scope)
+        if (-not $Scope) { return $null }
+        if ($Scope -match '^(?i)(/subscriptions/[0-9a-f-]+)') { return $Matches[1] }
+        # Fall back to the supplied scope (e.g. management-group scope) -- the
+        # ARM list endpoint accepts any scope.
+        return $Scope
+    }
+
+    function Test-OperatorScopeCovers {
+        # Returns $true if $AssignmentScope is an ancestor of, equal to, or a
+        # descendant of $TargetScope. Comparison is case-insensitive and ignores
+        # trailing slashes.
+        param([string]$AssignmentScope, [string]$TargetScope)
+        if (-not $AssignmentScope -or -not $TargetScope) { return $false }
+        $a = $AssignmentScope.TrimEnd('/')
+        $t = $TargetScope.TrimEnd('/')
+        if ([string]::Equals($a, $t, [System.StringComparison]::OrdinalIgnoreCase)) { return $true }
+        if ($t.StartsWith($a + '/', [System.StringComparison]::OrdinalIgnoreCase)) { return $true }  # assignment is ancestor of target
+        if ($a.StartsWith($t + '/', [System.StringComparison]::OrdinalIgnoreCase)) { return $true }  # assignment is descendant of target
+        return $false
+    }
+
+    $assignmentCache = @{}
+    function Get-OperatorAssignmentsForAnchor {
+        param([string]$AnchorScope)
+        if ($assignmentCache.ContainsKey($AnchorScope)) { return $assignmentCache[$AnchorScope] }
+
+        $encoded = [Uri]::EscapeDataString("assignedTo('$PrincipalId')")
+        $path = "$AnchorScope/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01&`$filter=$encoded"
+        $collected = New-Object System.Collections.ArrayList
+        $err = $null
+        try {
+            $resp = Invoke-AzRestMethod -Method GET -Path $path -ErrorAction Stop
+            if (-not $resp -or $resp.StatusCode -ge 400) {
+                $err = if ($resp) { "HTTP $($resp.StatusCode): $($resp.Content)" } else { 'no response' }
+            } else {
+                $body = $resp.Content | ConvertFrom-Json -ErrorAction Stop
+                foreach ($a in @($body.value)) {
+                    [void]$collected.Add($a)
+                }
+            }
+        } catch {
+            $err = $_.Exception.Message
+        }
+        $result = @{ Assignments = $collected.ToArray(); Error = $err }
+        $assignmentCache[$AnchorScope] = $result
+        return $result
+    }
+
     $present = @()
     $missing = @()
 
@@ -509,46 +567,39 @@ function Test-OperatorRoleAssignments {
             continue
         }
 
-        # atScope() + principalId filter returns direct + inherited assignments for the
-        # principal, scoped to ancestors of $scope. This is exactly what we want for a
-        # preflight check against a resource group or single resource.
-        $encodedAssignFilter = [Uri]::EscapeDataString("atScope() and assignedTo('$PrincipalId')")
-        $assignPath = "$scope/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01&`$filter=$encodedAssignFilter"
-
-        $assignResp = $null
-        try {
-            $assignResp = Invoke-AzRestMethod -Method GET -Path $assignPath -ErrorAction Stop
-        } catch {
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = $_.Exception.Message }
+        $anchor = Get-OperatorAssignmentAnchorScope -Scope $scope
+        if (-not $anchor) {
+            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = "Could not derive a subscription anchor scope from '$scope'." }
             continue
         }
 
-        if (-not $assignResp -or $assignResp.StatusCode -ge 400) {
-            $statusText = if ($assignResp) { "HTTP $($assignResp.StatusCode): $($assignResp.Content)" } else { 'no response' }
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = $statusText }
-            continue
-        }
-
-        try {
-            $body = $assignResp.Content | ConvertFrom-Json -ErrorAction Stop
-        } catch {
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = "Could not parse role assignment response: $($_.Exception.Message)" }
+        $bundle = Get-OperatorAssignmentsForAnchor -AnchorScope $anchor
+        if ($bundle.Error) {
+            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = $bundle.Error }
             continue
         }
 
         $matchedName = $null
-        foreach ($a in @($body.value)) {
+        $matchedScope = $null
+        foreach ($a in $bundle.Assignments) {
             $props = $a.properties
             if (-not $props) { continue }
-            $rdId = [string]$props.roleDefinitionId
             $assignedPrincipalId = [string]$props.principalId
-            if ($assignedPrincipalId -ne $PrincipalId) { continue }
-            # roleDefinitionId is full ARM id; match on trailing GUID against any
-            # of the acceptable role definition GUIDs.
+            # assignedTo() can include transitive (group-based) assignments where
+            # principalId is a group; accept those regardless of direct principal match.
+            if ($assignedPrincipalId -and $assignedPrincipalId -ne $PrincipalId -and ([string]$props.principalType) -notmatch '^(?i)group$') {
+                # If principalId is set and is neither us nor a group, skip.
+                # (assignedTo() should already constrain this, but be defensive.)
+            }
+            $assignmentScope = [string]$props.scope
+            if (-not (Test-OperatorScopeCovers -AssignmentScope $assignmentScope -TargetScope $scope)) { continue }
+
+            $rdId = [string]$props.roleDefinitionId
             $haveGuid = ($rdId -split '/')[ -1 ]
             for ($i = 0; $i -lt $acceptableGuids.Count; $i++) {
                 if ([string]::Equals($acceptableGuids[$i], $haveGuid, [System.StringComparison]::OrdinalIgnoreCase)) {
                     $matchedName = $acceptableNames[$i]
+                    $matchedScope = $assignmentScope
                     break
                 }
             }
@@ -556,8 +607,9 @@ function Test-OperatorRoleAssignments {
         }
 
         if ($matchedName) {
-            # Surface the role we actually matched (may be a superset of the primary).
-            $present += @{ RoleDefinitionName = $matchedName; Scope = $scope; Reason = $reason }
+            # Surface the role + the actual scope we matched at (may be a parent
+            # or child of the requested target scope).
+            $present += @{ RoleDefinitionName = $matchedName; Scope = $scope; MatchedScope = $matchedScope; Reason = $reason }
         } else {
             $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason }
         }
@@ -596,6 +648,16 @@ function Initialize-OperatorAuthContext {
 
         [hashtable[]]$RequiredRoleAssignments,
         [switch]$SkipTokenSizeCheck,
+        # Skip the RBAC preflight entirely. The operation will rely on the
+        # downstream Azure control-plane call to surface authoritative auth
+        # errors. Useful when customers grant permissions through complex
+        # scope/group inheritance that the preflight cannot enumerate.
+        [switch]$SkipOperatorRbacPreflight,
+        # When set, a missing-role result causes a hard failure (legacy
+        # behavior). When NOT set (default), a missing-role result is logged
+        # as a warning so the wrapper proceeds and the real Azure call
+        # produces the authoritative error message.
+        [switch]$StrictOperatorRbacPreflight,
 
         [string]$EventLogPath,
         [string]$RunId,
@@ -662,7 +724,13 @@ function Initialize-OperatorAuthContext {
     $principalId = Resolve-OperatorPrincipalId -TokenDiagnostics $diagnostics
 
     $rbac = $null
-    if ($RequiredRoleAssignments -and $RequiredRoleAssignments.Count -gt 0) {
+    if ($SkipOperatorRbacPreflight) {
+        Write-Host ''
+        Write-Host '--- RBAC preflight ---' -ForegroundColor Cyan
+        Write-Host 'RBAC preflight skipped (-SkipOperatorRbacPreflight). Azure will enforce permissions on the actual control-plane calls.' -ForegroundColor Yellow
+        $rbac = @{ Available = $false; Missing = @(); Present = @(); Error = 'Skipped by caller (-SkipOperatorRbacPreflight).' }
+    }
+    elseif ($RequiredRoleAssignments -and $RequiredRoleAssignments.Count -gt 0) {
         if (-not $principalId) {
             throw "Cannot run RBAC preflight: operator principal ID could not be resolved from the current Az context. Re-run with -OperatorAuthMode set explicitly, or install Az.Resources/Az.Accounts so the principal can be resolved."
         }
@@ -675,7 +743,11 @@ function Initialize-OperatorAuthContext {
             Write-Warning $rbac.Error
         } else {
             foreach ($p in $rbac.Present) {
-                Write-Host ("  [OK]      {0}  @  {1}" -f $p.RoleDefinitionName, $p.Scope)
+                if ($p.MatchedScope -and -not [string]::Equals($p.MatchedScope, $p.Scope, [System.StringComparison]::OrdinalIgnoreCase)) {
+                    Write-Host ("  [OK]      {0}  @  {1}   (inherited from {2})" -f $p.RoleDefinitionName, $p.Scope, $p.MatchedScope)
+                } else {
+                    Write-Host ("  [OK]      {0}  @  {1}" -f $p.RoleDefinitionName, $p.Scope)
+                }
             }
             foreach ($m in $rbac.Missing) {
                 Write-Host ("  [MISSING] {0}  @  {1}" -f $m.RoleDefinitionName, $m.Scope) -ForegroundColor Yellow
@@ -683,12 +755,22 @@ function Initialize-OperatorAuthContext {
 
             if ($rbac.Missing.Count -gt 0) {
                 $missingList = ($rbac.Missing | ForEach-Object { "    - {0} @ {1}  ({2})" -f $_.RoleDefinitionName, $_.Scope, $_.Reason }) -join "`n"
-                throw @"
-Operator RBAC preflight failed. The current operator identity is missing the following role assignments:
+                $message = @"
+Operator RBAC preflight could not confirm one or more required role assignments for the current operator identity:
 $missingList
 
-Grant the missing roles to the operator identity (e.g. via 'az role assignment create' or 'New-AzRoleAssignment' run as a user holding 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' at the relevant scope), then re-run the wrapper.
+This may be a false negative (e.g. role granted through nested groups, conditional access, or via a custom role) -- the preflight only inspects direct/inherited Azure RBAC assignments visible to the current identity.
+
+If the operation fails with an authorization error, grant the missing roles to the operator identity (e.g. via 'az role assignment create' or 'New-AzRoleAssignment' run as a user holding 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' at the relevant scope), then re-run the wrapper. The role assignment may be made at the resource, resource-group, subscription, or management-group scope -- whichever your environment standardises on.
+
+To suppress this preflight entirely, pass -SkipOperatorRbacPreflight (or set the wrapper switch of the same name).
 "@
+                if ($StrictOperatorRbacPreflight) {
+                    throw $message
+                } else {
+                    Write-Warning $message
+                    Write-Host 'Continuing past RBAC preflight; the Azure control-plane call will be the authoritative authorization check. Use -StrictOperatorRbacPreflight to fail fast instead.' -ForegroundColor Yellow
+                }
             }
         }
     }

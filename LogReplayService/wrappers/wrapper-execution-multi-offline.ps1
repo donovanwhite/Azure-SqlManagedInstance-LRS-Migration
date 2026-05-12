@@ -24,7 +24,16 @@ param(
     [securestring]$OperatorClientSecret,
     [string]$OperatorCertificateThumbprint,
     [string[]]$OperatorRequiredRoles,
-    [switch]$SkipTokenSizeCheck
+    [switch]$SkipTokenSizeCheck,
+    # Skip the operator-side RBAC preflight check entirely. Use this when role
+    # assignments are granted via inheritance / groups / custom roles that the
+    # preflight cannot enumerate. Azure itself remains the authoritative
+    # authorization check on the underlying control-plane operations.
+    [switch]$SkipOperatorRbacPreflight,
+    # When set, the RBAC preflight fails the wrapper hard if any required
+    # role cannot be confirmed. When NOT set (default), missing roles are
+    # logged as warnings and the wrapper continues.
+    [switch]$StrictOperatorRbacPreflight
 )
 
 Set-StrictMode -Version Latest
@@ -814,6 +823,8 @@ $operatorAuth = Initialize-OperatorAuthContext `
     -CertificateThumbprint $OperatorCertificateThumbprint `
     -RequiredRoleAssignments $operatorRoleRequirements `
     -SkipTokenSizeCheck:$SkipTokenSizeCheck `
+    -SkipOperatorRbacPreflight:$SkipOperatorRbacPreflight `
+    -StrictOperatorRbacPreflight:$StrictOperatorRbacPreflight `
     -EventLogPath $wrapperEventLogPath `
     -RunId $runId `
     -EventSource $eventSourceScriptName `
