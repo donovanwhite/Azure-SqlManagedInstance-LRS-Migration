@@ -493,7 +493,7 @@ function Initialize-OperatorAuthContext {
     $diagnostics = $null
     if (-not $SkipTokenSizeCheck) {
         Write-Host ''
-        Write-Host '--- Operator JWT diagnostics ---' -ForegroundColor Cyan
+        Write-Host '--- Operator JWT diagnostics ---' -ForegroundColor Green
         $diagnostics = Get-OperatorTokenDiagnostics
         if ($diagnostics) {
             $sizeText = if ($null -ne $diagnostics.JwtChars) { "$($diagnostics.JwtChars) chars" } else { 'unknown' }
@@ -504,8 +504,8 @@ function Initialize-OperatorAuthContext {
                 'Low'      { 'Green' }
                 default    { 'Gray' }
             }
-            Write-Host ("  JWT size : {0}" -f $sizeText)
-            Write-Host ("  Identity : idtyp={0}, groups={1}, groupsOverflow={2}" -f $idText, $diagnostics.GroupsCount, $diagnostics.HasGroupsOverflow)
+            Write-Host ("  JWT size : {0}" -f $sizeText) -ForegroundColor Green
+            Write-Host ("  Identity : idtyp={0}, groups={1}, groupsOverflow={2}" -f $idText, $diagnostics.GroupsCount, $diagnostics.HasGroupsOverflow) -ForegroundColor Green
             Write-Host ("  Risk     : {0}" -f $diagnostics.RiskLevel) -ForegroundColor $riskColor
             if ($diagnostics.Error) {
                 Write-Warning $diagnostics.Error
@@ -516,7 +516,7 @@ function Initialize-OperatorAuthContext {
         }
     } else {
         Write-Host ''
-        Write-Host '--- Operator JWT diagnostics ---' -ForegroundColor Cyan
+        Write-Host '--- Operator JWT diagnostics ---' -ForegroundColor Green
         Write-Host '  Skipped (-SkipTokenSizeCheck).' -ForegroundColor Yellow
     }
 
