@@ -130,24 +130,26 @@ Primary entry points:
 
 ### Required RBAC role assignments
 
-There are two distinct identities involved. Grant them the roles below at the exact scopes shown; the preflight in the wrappers checks at these scopes and will fail fast otherwise.
+These role assignments are prerequisites — grant them before running the wrappers. The wrappers do not perform a client-side RBAC preflight; if a role is missing, Azure returns an authorization error from the relevant control-plane call.
+
+Each role may be granted at any scope that covers the target resource (management group, subscription, resource group, or the resource itself). Group-based assignments and inherited assignments are supported because Azure itself performs the authorization check.
 
 Operator identity (the principal the wrapper runs under — user, service principal, or managed identity):
 
-| Role | Scope | Why |
+| Role | Recommended scope | Why |
 |---|---|---|
-| `SQL Managed Instance Contributor` | Resource group containing the target Managed Instance (for example `/subscriptions/<sub>/resourceGroups/<rg>`). | Required to start, monitor, and complete LRS on the Managed Instance. Assignments scoped only to the MI resource itself are not detected by the preflight; grant at the resource group (or above). |
-| `Storage Blob Data Contributor` (or `Storage Blob Data Owner`) | Storage account hosting the LRS container (for example `/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account>`). | The operator creates the destination container (`azcopy make`) and uploads backup blobs. Read-only roles such as `Storage Blob Data Reader` are not sufficient on the operator side. Skip this when using `-StorageAuthMode Sas`. |
+| `SQL Managed Instance Contributor` | Resource group containing the target Managed Instance, or the Managed Instance resource itself. | Required to start, monitor, and complete LRS on the Managed Instance. |
+| `Storage Blob Data Contributor` (or `Storage Blob Data Owner`) | Storage account hosting the LRS container, or the target container. | The operator creates the destination container (`azcopy make`) and uploads backup blobs. Read-only roles such as `Storage Blob Data Reader` are not sufficient on the operator side. Skip this when using `-StorageAuthMode Sas`. |
 
 SQL Managed Instance system-assigned managed identity (the MI itself, used by LRS to read backups at restore time):
 
-| Role | Scope | Why |
+| Role | Recommended scope | Why |
 |---|---|---|
 | `Storage Blob Data Reader` (or any role granting Read/List on blobs) | Target container or the storage account. | LRS streams backup blobs from storage using the MI's managed identity. Read access is enough — no write access is required on this identity. |
 
 Notes:
 
-- RBAC changes commonly take 5–10 minutes to propagate before ARM filter queries observe them; if the preflight reports a role as missing immediately after granting it, wait and re-run.
+- RBAC changes commonly take 5–10 minutes to propagate; if a control-plane call returns an authorization error immediately after granting a role, wait and re-run.
 - `Storage Blob Data Owner` is accepted as a superset of `Storage Blob Data Contributor` on the operator side.
 
 ### PowerShell execution policy
@@ -397,17 +399,9 @@ Choosing a low-claim operator identity (for example a User-Assigned Managed Iden
 | `-OperatorApplicationId` | string | (none) | Service principal app ID (for `ServicePrincipal`), or UAMI client ID (for `UserAssignedManagedIdentity`). |
 | `-OperatorClientSecret` | SecureString | (none) | Service principal client secret. Mutually exclusive with `-OperatorCertificateThumbprint`. |
 | `-OperatorCertificateThumbprint` | string | (none) | Service principal certificate thumbprint. Mutually exclusive with `-OperatorClientSecret`. |
-| `-OperatorRequiredRoles` | string[] | (built-in) | Override the default required-role set. Defaults are `SQL Managed Instance Contributor` at the resource group scope, plus `Storage Blob Data Contributor` at the storage account scope when not using SAS (`Storage Blob Data Owner` is also accepted). |
 | `-SkipTokenSizeCheck` | switch | off | Skip the JWT size diagnostic. Not recommended; the diagnostic is a useful signal when `completeRestore` returns `InternalServerError`. |
 
-When the operator identity is missing a required role, the wrapper stops before the LRS phase with a message of the form:
-
-```text
-Operator RBAC preflight failed. The current operator identity is missing the following role assignments:
-    - SQL Managed Instance Contributor @ /subscriptions/.../resourceGroups/rg_sql_dev_zan  (Required to start, monitor, and complete LRS on the Managed Instance.)
-```
-
-Grant the missing roles at the scopes listed in the [Required RBAC role assignments](#required-rbac-role-assignments) section (for example via `az role assignment create` or `New-AzRoleAssignment`), wait for RBAC propagation, then re-run the wrapper.
+If the operator identity is missing a required role, Azure returns an authorization error from the relevant control-plane call (LRS start, container creation, or blob upload). Grant the missing role at any scope that covers the target resource (see [Required RBAC role assignments](#required-rbac-role-assignments)) using `az role assignment create` or `New-AzRoleAssignment`, wait for RBAC propagation, then re-run the wrapper.
 
 ### Online-only parameters
 
