@@ -10,14 +10,12 @@ It supports two modes:
 
 - Az.Sql PowerShell module 4.0.0+.
 - Azure CLI 2.42.0+.
-- SQL Managed Instance managed identity with `Storage Blob Data Reader` or equivalent Read/List access on the target container.
-- Operator identity with `SQL Managed Instance Contributor` covering the target Managed Instance (granted at the Managed Instance, resource group, subscription, or management group scope).
-- Operator identity with `Storage Blob Data Contributor` (or `Storage Blob Data Owner`) covering the LRS storage account or container when not using `-StorageAuthMode Sas`.
+- SQL Managed Instance managed identity with `Storage Blob Data Reader` or equivalent Read/List access on backups.
+- Operator identity with `SQL Managed Instance Contributor`.
+- Operator identity with `Storage Blob Data Contributor` (or `Storage Blob Data Owner`) when not using `-StorageAuthMode Sas`.
 - Backups in a flat-folder structure per database (no nested folders).
 - Container or folder names must not include backup or Backup.
 - When migrating multiple databases, each database must be in its own folder.
-
-The wrappers do not perform a client-side RBAC preflight. If an assignment is missing, Azure returns an authorization error from the relevant control-plane call. RBAC changes can take 5–10 minutes to propagate.
 
 ## Compliant folder structure
 
