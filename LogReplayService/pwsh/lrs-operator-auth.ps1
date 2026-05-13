@@ -1,4 +1,4 @@
-# Shared operator-side authentication, token diagnostics, and RBAC preflight
+# Shared operator-side authentication and token diagnostics
 # helpers used by the multi-DB LRS wrappers (offline + online).
 #
 # Operator auth modes supported:
@@ -418,215 +418,10 @@ function Resolve-OperatorSubscriptionSelection {
     return [string]$selected.Id
 }
 
-function Test-OperatorRoleAssignments {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$PrincipalId,
-        [Parameter(Mandatory)]
-        [hashtable[]]$Required
-    )
-
-    if (-not (Get-Command Invoke-AzRestMethod -ErrorAction SilentlyContinue)) {
-        return @{
-            Available = $false
-            Missing   = @()
-            Present   = @()
-            Error     = "Az.Accounts is not available; cannot evaluate RBAC preflight. Install Az.Accounts to enable role checks."
-        }
-    }
-
-    # Resolve role definition IDs once per role name. Role assignments returned by
-    # ARM only carry roleDefinitionId, not the friendly name, so we match by GUID.
-    # We do this via ARM REST as well to avoid Microsoft Graph dependencies that
-    # Get-AzRoleDefinition / Get-AzRoleAssignment can implicitly require when the
-    # current context is a System/User Assigned Managed Identity without Graph
-    # permissions (a common failure mode that silently returns empty results).
-    $roleDefIdCache = @{}
-    function Resolve-OperatorRoleDefinitionId {
-        param([string]$RoleName, [string]$Scope)
-        if ($roleDefIdCache.ContainsKey($RoleName)) { return $roleDefIdCache[$RoleName] }
-
-        $encodedFilter = [Uri]::EscapeDataString("roleName eq '$RoleName'")
-        $defPath = "$Scope/providers/Microsoft.Authorization/roleDefinitions?api-version=2022-04-01&`$filter=$encodedFilter"
-        try {
-            $resp = Invoke-AzRestMethod -Method GET -Path $defPath -ErrorAction Stop
-        } catch {
-            return $null
-        }
-        if (-not $resp -or $resp.StatusCode -ge 400) { return $null }
-        try {
-            $body = $resp.Content | ConvertFrom-Json -ErrorAction Stop
-        } catch {
-            return $null
-        }
-        $defId = $null
-        foreach ($item in @($body.value)) {
-            if ($item.properties.roleName -eq $RoleName) {
-                $defId = [string]$item.id
-                break
-            }
-        }
-        $roleDefIdCache[$RoleName] = $defId
-        return $defId
-    }
-
-    # Fetch the operator's full effective assignment set ONCE, anchored at the
-    # subscription extracted from the first requirement's scope. Using
-    # `assignedTo('{principalId}')` (without atScope()) at the subscription scope
-    # returns assignments inherited from parent management groups AND assignments
-    # at any child scope (RG, resource, sub-resource). This lets us accept a
-    # requirement when the operator has the role at ANY scope along the
-    # ancestor/descendant chain of the target scope -- which is what customers
-    # actually do (they grant at the MI, RG, sub, or MG level interchangeably).
-    function Get-OperatorAssignmentAnchorScope {
-        param([string]$Scope)
-        if (-not $Scope) { return $null }
-        if ($Scope -match '^(?i)(/subscriptions/[0-9a-f-]+)') { return $Matches[1] }
-        # Fall back to the supplied scope (e.g. management-group scope) -- the
-        # ARM list endpoint accepts any scope.
-        return $Scope
-    }
-
-    function Test-OperatorScopeCovers {
-        # Returns $true if $AssignmentScope is an ancestor of, equal to, or a
-        # descendant of $TargetScope. Comparison is case-insensitive and ignores
-        # trailing slashes.
-        param([string]$AssignmentScope, [string]$TargetScope)
-        if (-not $AssignmentScope -or -not $TargetScope) { return $false }
-        $a = $AssignmentScope.TrimEnd('/')
-        $t = $TargetScope.TrimEnd('/')
-        if ([string]::Equals($a, $t, [System.StringComparison]::OrdinalIgnoreCase)) { return $true }
-        if ($t.StartsWith($a + '/', [System.StringComparison]::OrdinalIgnoreCase)) { return $true }  # assignment is ancestor of target
-        if ($a.StartsWith($t + '/', [System.StringComparison]::OrdinalIgnoreCase)) { return $true }  # assignment is descendant of target
-        return $false
-    }
-
-    $assignmentCache = @{}
-    function Get-OperatorAssignmentsForAnchor {
-        param([string]$AnchorScope)
-        if ($assignmentCache.ContainsKey($AnchorScope)) { return $assignmentCache[$AnchorScope] }
-
-        $encoded = [Uri]::EscapeDataString("assignedTo('$PrincipalId')")
-        $path = "$AnchorScope/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01&`$filter=$encoded"
-        $collected = New-Object System.Collections.ArrayList
-        $err = $null
-        try {
-            $resp = Invoke-AzRestMethod -Method GET -Path $path -ErrorAction Stop
-            if (-not $resp -or $resp.StatusCode -ge 400) {
-                $err = if ($resp) { "HTTP $($resp.StatusCode): $($resp.Content)" } else { 'no response' }
-            } else {
-                $body = $resp.Content | ConvertFrom-Json -ErrorAction Stop
-                foreach ($a in @($body.value)) {
-                    [void]$collected.Add($a)
-                }
-            }
-        } catch {
-            $err = $_.Exception.Message
-        }
-        $result = @{ Assignments = $collected.ToArray(); Error = $err }
-        $assignmentCache[$AnchorScope] = $result
-        return $result
-    }
-
-    $present = @()
-    $missing = @()
-
-    foreach ($req in $Required) {
-        $roleName = [string]$req['RoleDefinitionName']
-        $scope    = [string]$req['Scope']
-        $reason   = [string]$req['Reason']
-
-        if (-not $roleName -or -not $scope) { continue }
-
-        # A requirement can be satisfied by any of an explicit list of roles
-        # (e.g. Storage Blob Data Contributor is also satisfied by Storage Blob
-        # Data Owner). If AcceptableRoleDefinitionNames is not provided, fall
-        # back to the single primary role.
-        $acceptableNames = @()
-        if ($req.ContainsKey('AcceptableRoleDefinitionNames') -and $req['AcceptableRoleDefinitionNames']) {
-            $acceptableNames = @($req['AcceptableRoleDefinitionNames'] | Where-Object { $_ })
-        }
-        if ($acceptableNames.Count -eq 0) {
-            $acceptableNames = @($roleName)
-        }
-
-        $acceptableGuids = @()
-        $lookupErrors = @()
-        foreach ($candidateName in $acceptableNames) {
-            $cid = Resolve-OperatorRoleDefinitionId -RoleName $candidateName -Scope $scope
-            if ($cid) {
-                $acceptableGuids += (($cid -split '/')[ -1 ])
-            } else {
-                $lookupErrors += "Could not resolve role definition id for '$candidateName' via ARM at or above scope '$scope'."
-            }
-        }
-
-        if ($acceptableGuids.Count -eq 0) {
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = ($lookupErrors -join ' ') }
-            continue
-        }
-
-        $anchor = Get-OperatorAssignmentAnchorScope -Scope $scope
-        if (-not $anchor) {
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = "Could not derive a subscription anchor scope from '$scope'." }
-            continue
-        }
-
-        $bundle = Get-OperatorAssignmentsForAnchor -AnchorScope $anchor
-        if ($bundle.Error) {
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason; LookupError = $bundle.Error }
-            continue
-        }
-
-        $matchedName = $null
-        $matchedScope = $null
-        foreach ($a in $bundle.Assignments) {
-            $props = $a.properties
-            if (-not $props) { continue }
-            $assignedPrincipalId = [string]$props.principalId
-            # assignedTo() can include transitive (group-based) assignments where
-            # principalId is a group; accept those regardless of direct principal match.
-            if ($assignedPrincipalId -and $assignedPrincipalId -ne $PrincipalId -and ([string]$props.principalType) -notmatch '^(?i)group$') {
-                # If principalId is set and is neither us nor a group, skip.
-                # (assignedTo() should already constrain this, but be defensive.)
-            }
-            $assignmentScope = [string]$props.scope
-            if (-not (Test-OperatorScopeCovers -AssignmentScope $assignmentScope -TargetScope $scope)) { continue }
-
-            $rdId = [string]$props.roleDefinitionId
-            $haveGuid = ($rdId -split '/')[ -1 ]
-            for ($i = 0; $i -lt $acceptableGuids.Count; $i++) {
-                if ([string]::Equals($acceptableGuids[$i], $haveGuid, [System.StringComparison]::OrdinalIgnoreCase)) {
-                    $matchedName = $acceptableNames[$i]
-                    $matchedScope = $assignmentScope
-                    break
-                }
-            }
-            if ($matchedName) { break }
-        }
-
-        if ($matchedName) {
-            # Surface the role + the actual scope we matched at (may be a parent
-            # or child of the requested target scope).
-            $present += @{ RoleDefinitionName = $matchedName; Scope = $scope; MatchedScope = $matchedScope; Reason = $reason }
-        } else {
-            $missing += @{ RoleDefinitionName = $roleName; Scope = $scope; Reason = $reason }
-        }
-    }
-
-    return @{
-        Available = $true
-        Missing   = $missing
-        Present   = $present
-        Error     = $null
-    }
-}
-
 function Initialize-OperatorAuthContext {
     <#
     .SYNOPSIS
-        Connects the operator identity, measures token risk, and runs an RBAC preflight.
+        Connects the operator identity and measures token risk.
     .DESCRIPTION
         Returns a hashtable describing the resolved operator auth state. Use this
         early in a wrapper script (before any Azure control-plane work) so that
@@ -646,18 +441,7 @@ function Initialize-OperatorAuthContext {
         [securestring]$ClientSecret,
         [string]$CertificateThumbprint,
 
-        [hashtable[]]$RequiredRoleAssignments,
         [switch]$SkipTokenSizeCheck,
-        # Skip the RBAC preflight entirely. The operation will rely on the
-        # downstream Azure control-plane call to surface authoritative auth
-        # errors. Useful when customers grant permissions through complex
-        # scope/group inheritance that the preflight cannot enumerate.
-        [switch]$SkipOperatorRbacPreflight,
-        # When set, a missing-role result causes a hard failure (legacy
-        # behavior). When NOT set (default), a missing-role result is logged
-        # as a warning so the wrapper proceeds and the real Azure call
-        # produces the authoritative error message.
-        [switch]$StrictOperatorRbacPreflight,
 
         [string]$EventLogPath,
         [string]$RunId,
@@ -723,58 +507,6 @@ function Initialize-OperatorAuthContext {
 
     $principalId = Resolve-OperatorPrincipalId -TokenDiagnostics $diagnostics
 
-    $rbac = $null
-    if ($SkipOperatorRbacPreflight) {
-        Write-Host ''
-        Write-Host '--- RBAC preflight ---' -ForegroundColor Cyan
-        Write-Host 'RBAC preflight skipped (-SkipOperatorRbacPreflight). Azure will enforce permissions on the actual control-plane calls.' -ForegroundColor Yellow
-        $rbac = @{ Available = $false; Missing = @(); Present = @(); Error = 'Skipped by caller (-SkipOperatorRbacPreflight).' }
-    }
-    elseif ($RequiredRoleAssignments -and $RequiredRoleAssignments.Count -gt 0) {
-        if (-not $principalId) {
-            throw "Cannot run RBAC preflight: operator principal ID could not be resolved from the current Az context. Re-run with -OperatorAuthMode set explicitly, or install Az.Resources/Az.Accounts so the principal can be resolved."
-        }
-
-        Write-Host ''
-        Write-Host '--- RBAC preflight ---' -ForegroundColor Cyan
-        $rbac = Test-OperatorRoleAssignments -PrincipalId $principalId -Required $RequiredRoleAssignments
-
-        if (-not $rbac.Available) {
-            Write-Warning $rbac.Error
-        } else {
-            foreach ($p in $rbac.Present) {
-                if ($p.MatchedScope -and -not [string]::Equals($p.MatchedScope, $p.Scope, [System.StringComparison]::OrdinalIgnoreCase)) {
-                    Write-Host ("  [OK]      {0}  @  {1}   (inherited from {2})" -f $p.RoleDefinitionName, $p.Scope, $p.MatchedScope)
-                } else {
-                    Write-Host ("  [OK]      {0}  @  {1}" -f $p.RoleDefinitionName, $p.Scope)
-                }
-            }
-            foreach ($m in $rbac.Missing) {
-                Write-Host ("  [MISSING] {0}  @  {1}" -f $m.RoleDefinitionName, $m.Scope) -ForegroundColor Yellow
-            }
-
-            if ($rbac.Missing.Count -gt 0) {
-                $missingList = ($rbac.Missing | ForEach-Object { "    - {0} @ {1}  ({2})" -f $_.RoleDefinitionName, $_.Scope, $_.Reason }) -join "`n"
-                $message = @"
-Operator RBAC preflight could not confirm one or more required role assignments for the current operator identity:
-$missingList
-
-This may be a false negative (e.g. role granted through nested groups, conditional access, or via a custom role) -- the preflight only inspects direct/inherited Azure RBAC assignments visible to the current identity.
-
-If the operation fails with an authorization error, grant the missing roles to the operator identity (e.g. via 'az role assignment create' or 'New-AzRoleAssignment' run as a user holding 'Role Based Access Control Administrator', 'User Access Administrator', or 'Owner' at the relevant scope), then re-run the wrapper. The role assignment may be made at the resource, resource-group, subscription, or management-group scope -- whichever your environment standardises on.
-
-To suppress this preflight entirely, pass -SkipOperatorRbacPreflight (or set the wrapper switch of the same name).
-"@
-                if ($StrictOperatorRbacPreflight) {
-                    throw $message
-                } else {
-                    Write-Warning $message
-                    Write-Host 'Continuing past RBAC preflight; the Azure control-plane call will be the authoritative authorization check. Use -StrictOperatorRbacPreflight to fail fast instead.' -ForegroundColor Yellow
-                }
-            }
-        }
-    }
-
     $effectiveTenantValue = Get-OperatorAuthPropertyValue -InputObject (Get-OperatorAuthPropertyValue -InputObject $context -Name 'Tenant') -Name 'Id'
     $effectiveSubValue = Get-OperatorAuthPropertyValue -InputObject (Get-OperatorAuthPropertyValue -InputObject $context -Name 'Subscription') -Name 'Id'
     $effectiveTenant = if ($effectiveTenantValue) { [string]$effectiveTenantValue } else { $TenantId }
@@ -793,7 +525,6 @@ To suppress this preflight entirely, pass -SkipOperatorRbacPreflight (or set the
         PrincipalId        = $principalId
         ApplicationId      = $ApplicationId
         TokenDiagnostics   = $diagnostics
-        RoleCheck          = $rbac
     }
 
     $eventLevel = if ($diagnostics -and $diagnostics.RiskLevel -in @('High', 'Elevated')) { 'Warning' } else { 'Info' }
@@ -819,73 +550,7 @@ To suppress this preflight entirely, pass -SkipOperatorRbacPreflight (or set the
             groupsCount      = if ($diagnostics) { $diagnostics.GroupsCount } else { $null }
             tokenRisk        = if ($diagnostics) { $diagnostics.RiskLevel } else { $null }
             tokenWarnings    = if ($diagnostics) { @($diagnostics.Warnings) } else { @() }
-            requiredRoles    = if ($RequiredRoleAssignments) { @($RequiredRoleAssignments | ForEach-Object { @{ role = $_['RoleDefinitionName']; scope = $_['Scope'] } }) } else { @() }
-            missingRoles     = if ($rbac -and $rbac.Missing) { @($rbac.Missing | ForEach-Object { @{ role = $_['RoleDefinitionName']; scope = $_['Scope'] } }) } else { @() }
         }
 
     return $authState
-}
-
-function Get-OperatorRoleRequirementSet {
-    <#
-    .SYNOPSIS
-        Builds the default required-role list for the LRS wrappers.
-    .DESCRIPTION
-        Returns an array of @{ RoleDefinitionName; Scope; Reason;
-        AcceptableRoleDefinitionNames } entries suitable for
-        Initialize-OperatorAuthContext. Always requires SQL Managed Instance
-        Contributor at the resource group scope. Adds Storage Blob Data
-        Contributor at the storage account scope only when a storage account
-        is configured AND storage auth is not SAS. The operator needs write
-        access because the transfer step creates the container (azcopy make)
-        and uploads backup blobs; Storage Blob Data Owner is also accepted
-        as a superset of Contributor.
-    #>
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$SubscriptionId,
-        [Parameter(Mandatory)]
-        [string]$ResourceGroupName,
-        [string]$StorageAccountName,
-        [string]$StorageAuthMode,
-        [string[]]$Override
-    )
-
-    if ($Override -and $Override.Count -gt 0) {
-        $rgScope = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName"
-        return @(
-            $Override | Where-Object { $_ } | ForEach-Object {
-                @{ RoleDefinitionName = $_; Scope = $rgScope; Reason = 'OperatorRequiredRoles override' }
-            }
-        )
-    }
-
-    $rgScope = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName"
-    $required = @(
-        @{
-            RoleDefinitionName = 'SQL Managed Instance Contributor'
-            Scope              = $rgScope
-            Reason             = 'Required to start, monitor, and complete LRS on the Managed Instance.'
-        }
-    )
-
-    $usesStorageBlobAuth = $false
-    if ($StorageAccountName) {
-        $authNormalized = ($StorageAuthMode | ForEach-Object { if ($_) { $_.ToString().ToLowerInvariant() } else { '' } })
-        if ($authNormalized -notin @('sas', 'sharedaccesssignature')) {
-            $usesStorageBlobAuth = $true
-        }
-    }
-
-    if ($usesStorageBlobAuth) {
-        $required += @{
-            RoleDefinitionName             = 'Storage Blob Data Contributor'
-            AcceptableRoleDefinitionNames  = @('Storage Blob Data Contributor', 'Storage Blob Data Owner')
-            Scope                          = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName"
-            Reason                         = 'Required for the operator to create the LRS container and upload backup blobs (azcopy make + azcopy copy) without SAS. Storage Blob Data Owner also satisfies this.'
-        }
-    }
-
-    return $required
 }

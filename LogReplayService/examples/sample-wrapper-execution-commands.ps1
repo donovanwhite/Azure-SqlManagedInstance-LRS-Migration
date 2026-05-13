@@ -94,9 +94,10 @@ Set-Location 'C:\AzureDataMigrationAssessments\LogReplayService\wrappers'
 #   SAMI mint small tokens because they have no user-group claims.
 #
 #   The operator identity must already hold the required role assignments
-#   (SQL Managed Instance Contributor at the RG, plus Storage Blob Data Reader at the
-#   storage account when not using SAS). The wrapper performs a preflight check and
-#   fails fast with the missing-role list if any required role is not assigned.
+#   (SQL Managed Instance Contributor and, when not using SAS, Storage Blob Data
+#   Contributor on the storage account). The wrapper no longer performs an RBAC
+#   preflight check; Azure will return an authorization error from the underlying
+#   control-plane call if a required role is missing.
 
 # 7. (Optional) Run online from an Azure VM with a User-Assigned Managed Identity attached
 .\wrapper-execution-multi-online.ps1 `
